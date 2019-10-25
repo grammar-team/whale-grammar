@@ -1,0 +1,32 @@
+{
+  "name": "whale-grammar",
+  "version": "1.0.0",
+  "description": "Korean grammar checker extension for whale browser",
+  "main": "webpack.config.js",
+  "scripts": {
+    "cleanup": "rm -rf dist && mkdir dist",
+    "copy": "cp -rip src/* dist/",
+    "build": "./node_modules/.bin/webpack --mode=none",
+    "build:prod": "./node_modules/.bin/webpack",
+    "build:watch": "npm run cleanup && npm run copy && ./node_modules/.bin/webpack --mode=none --watch",
+    "eslint": "./node_modules/.bin/eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dlehdanakf/whale-grammar.git"
+  },
+  "author": "LEE DONG HYUN & HAN SEUNG JIN",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "babel-loader": "^8.0.5",
+    "css-loader": "^3.2.0",
+    "event-hooks-webpack-plugin": "^2.1.4",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.0.8"
+  },
+  "dependencies": {}
+}
