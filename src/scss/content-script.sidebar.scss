@@ -1,21 +1,66 @@
-body {
-  header { display: none; }
+html[data-useragent*="sidebar"] body {
+  visibility: hidden;
+}
+body.whale-grammar {
+  visibility: visible !important;
+
+  header {
+    display: none;
+  }
   #container {
     padding-top: 0 !important;
 
-    .api_subject_bx { margin-top: 0; }
-    #_related_keywords,
-    #aside,
-    .sp_page { display: none; }
-    section:not(#grammar_checker) { display: none; }
+    .api_subject_bx {
+      margin-top: 0;
+    }
+
     #grammar_checker {
       .info_more,
-      .api_banner_wrap { display: none; }
+      .api_banner_wrap {
+        display: none;
+      }
+      .inspection_bx {
+        display: block !important;
+
+        span.inspection {
+          display: none;
+        }
+
+        &[style="display:none;"],
+        &[style="display: none;"] {
+          button.inspection {
+            display: none;
+          }
+          span.inspection {
+            display: block;
+            opacity: 0.4;
+            box-sizing: border-box;
+            height: auto;
+            padding-top: 11px;
+            padding-bottom: 11px;
+          }
+        }
+      }
+    }
+
+    #_related_keywords,
+    #aside,
+    .sp_page,
+    section:not(#grammar_checker) {
+      display: none;
     }
   }
   footer {
     .footer_function,
-    .footer_etc_wrap,
-    .service_area { display: none; }
+    .footer_etc_wrap {
+      display: none;
+    }
+    .api_info_service {
+      padding: 12px 0;
+
+      .service_area {
+        display: none;
+      }
+    }
   }
 }
