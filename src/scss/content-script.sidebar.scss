@@ -1,0 +1,21 @@
+body {
+  header { display: none; }
+  #container {
+    padding-top: 0 !important;
+
+    .api_subject_bx { margin-top: 0; }
+    #_related_keywords,
+    #aside,
+    .sp_page { display: none; }
+    section:not(#grammar_checker) { display: none; }
+    #grammar_checker {
+      .info_more,
+      .api_banner_wrap { display: none; }
+    }
+  }
+  footer {
+    .footer_function,
+    .footer_etc_wrap,
+    .service_area { display: none; }
+  }
+}

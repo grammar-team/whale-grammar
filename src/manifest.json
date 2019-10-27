@@ -27,11 +27,11 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*/*"],
-      "css": ["css/content-script.css"],
-      "js": ["js/content-script.js"],
-      "all_frames": true,
-      "run_at": "document_idle"
+      "matches": ["https://m.search.naver.com/search.naver?from=whale-grammer&query=*"],
+      "css": ["css/content-script.sidebar.css"],
+      "js": ["js/content-script.sidebar.js"],
+      "all_frames": false,
+      "run_at": "document_start"
     }
   ],
 
