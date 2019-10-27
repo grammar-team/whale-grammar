@@ -3,18 +3,17 @@
   "name": "웨않되 - 맞춤법 검사기",
   "version": "1.0.0",
   "description": "웨일 브라우저용 한글 맞춤법 검사기 (feat. NAVER 맞춤법 검사기)",
-  "default_locale": "ko",
   "icons": {
-    "16": "image/icon16.png",
-    "32": "image/icon32.png",
-    "48": "image/icon48.png",
-    "128": "image/icon128.png"
+    "16": "image/dummy_128.png",
+    "32": "image/dummy_128.png",
+    "48": "image/dummy_128.png",
+    "128": "image/dummy_128.png"
   },
 
   "sidebar_action": {
     "default_page": "sidebar.html",
     "default_icon": {
-      "16": "image/icon16.png"
+      "16": "image/dummy_128.png"
     },
 
     "default_title": "웨않되",
@@ -28,7 +27,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*"],
+      "matches": ["https://*/*"],
       "css": ["css/content-script.css"],
       "js": ["js/content-script.js"],
       "all_frames": true,
