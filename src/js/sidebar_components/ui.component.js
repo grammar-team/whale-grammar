@@ -1,5 +1,20 @@
 /* global whale */
 
+export function isSidebar() {
+	const { dataset } = document.documentElement;
+	const { userAgent } = window.navigator;
+	const { href } = window.location;
+	if(
+		userAgent.includes(`sidebar`) &&
+		dataset.useragent.includes(`sidebar`) &&
+		href.includes(`whale-grammar`)
+	) {
+		return true;
+	}
+
+	return false;
+}
+
 function duplicateInspectButton(parentEl) {
 	const buttonEl = parentEl.querySelector(`button`);
 	const { innerText, className } = buttonEl;
@@ -43,7 +58,7 @@ function injectIntroduceSection(nodeEl) {
 			e.preventDefault();
 			whale.runtime.sendMessage({
 				action: `openURL`,
-				data: { url: this.href }
+				options: { url: this.href }
 			});
 		});
 	});

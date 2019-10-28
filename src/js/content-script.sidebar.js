@@ -1,19 +1,17 @@
-import { transformDisplayComponents, constructComponentController } from "./sidebar_components/ui.component";
+import {
+	isSidebar,
+	transformDisplayComponents,
+	constructComponentController
+} from "./sidebar_components/ui.component";
 
-function isSidebar() {
-	const { dataset } = document.documentElement;
-	const { userAgent } = window.navigator;
-	const { href } = window.location;
-	if(
-		userAgent.includes(`sidebar`) &&
-		dataset.useragent.includes(`sidebar`) &&
-		href.includes(`whale-grammar`)
-	) {
-		return true;
+const EVENT_LISTENER = {
+	setOriginalText: function(options, controller) {
+		const { text } = options;
+		if(typeof text === typeof `string`) {
+			controller.setText(text);
+		}
 	}
-
-	return false;
-}
+};
 
 document.addEventListener(`DOMContentLoaded`, function() {
 	if(isSidebar() === false) {
@@ -28,4 +26,13 @@ document.addEventListener(`DOMContentLoaded`, function() {
 	transformDisplayComponents(sectionEl);
 
 	const port = whale.runtime.connect({ name: `grammar-sidebar` });
+	port.onMessage.addListener(message => {
+		const { action, options } = message;
+		if(
+			EVENT_LISTENER.hasOwnProperty(action) &&
+			typeof EVENT_LISTENER[action] === `function`
+		) {
+			EVENT_LISTENER[action](options, controller);
+		}
+	});
 });
