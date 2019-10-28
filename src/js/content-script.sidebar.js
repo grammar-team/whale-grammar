@@ -1,4 +1,4 @@
-import { transformDisplayComponents } from "./sidebar_components/ui.component";
+import { transformDisplayComponents, constructComponentController } from "./sidebar_components/ui.component";
 
 function isSidebar() {
 	const { dataset } = document.documentElement;
@@ -23,5 +23,7 @@ document.addEventListener(`DOMContentLoaded`, function() {
 	const bodyEl = document.querySelector(`body`);
 	bodyEl.classList.add(`whale-grammar`);
 
-	transformDisplayComponents();
+	const sectionEl = document.querySelector(`#grammar_checker`);
+	const controller = constructComponentController(sectionEl);
+	transformDisplayComponents(sectionEl);
 });

@@ -1,6 +1,6 @@
 /* global whale */
 
-export function duplicateInspectButton(parentEl) {
+function duplicateInspectButton(parentEl) {
 	const buttonEl = parentEl.querySelector(`button`);
 	const { innerText, className } = buttonEl;
 
@@ -11,7 +11,7 @@ export function duplicateInspectButton(parentEl) {
 	buttonEl.parentNode.insertBefore(nodeEl, buttonEl);
 }
 
-export function bindEventToNAVER() {
+function bindEventToNAVER() {
 	const aEl = document.querySelector(`.service_logo`);
 	aEl.target = `_blank`;
 }
@@ -27,7 +27,7 @@ function renderExtensionSection() {
 			<p class="description">본 확장앱은 웨일 확장앱 콘테스트 출품작입니다.</p>
 		</div>
 		<ul class="section-buttons">
-			<li><a href="#">사용안내</a></li>
+			<li><a href="#">사용방법</a></li>
 			<li><a href="#">버그신고</a></li>
 			<li><a href="#">리뷰 남기기</a></li>
 		</ul>
@@ -35,7 +35,7 @@ function renderExtensionSection() {
 
 	return sectionEl;
 }
-export function injectIntroduceSection(nodeEl) {
+function injectIntroduceSection(nodeEl) {
 	const sectionEl = renderExtensionSection();
 	const aEls = sectionEl.querySelectorAll(`a`);
 	aEls.forEach(aEl => {
@@ -50,7 +50,7 @@ export function injectIntroduceSection(nodeEl) {
 
 	nodeEl.parentElement.insertBefore(sectionEl, nodeEl.nextSibling);
 }
-export function transformServiceLogo() {
+function transformServiceLogo() {
 	const imgEl = document.createElement(`img`);
 	imgEl.src = whale.runtime.getURL(`image/naver_logo.png`);
 	imgEl.alt = `NAVER`;
@@ -64,11 +64,35 @@ export function transformServiceLogo() {
 	titleEl.firstChild.textContent = textContent.replace(`네이버`, ``).trim();
 }
 
-export function transformDisplayComponents() {
-	const sectionEl = document.querySelector(`#grammar_checker`);
+export function transformDisplayComponents(sectionEl) {
 	duplicateInspectButton(sectionEl);
 	injectIntroduceSection(sectionEl);
 
 	bindEventToNAVER();
 	transformServiceLogo();
+}
+
+export function constructComponentController(sectionEl) {
+	const inputEl = sectionEl.querySelector(`textarea`);
+	const buttonEl = sectionEl.querySelector(`button.inspection`);
+	const resultEl = sectionEl.querySelector(`.result_text`);
+
+	return {
+		inputEl,
+		buttonEl,
+		resultEl,
+
+		setText: function(e) {
+			if(typeof e !== typeof `string` || e.length < 1)
+				return;
+
+			this.inputEl.value = `${e}`;
+		},
+		runInspection: function() {
+			this.buttonEl.click();
+		},
+		getResult: function(e) {
+			return this.resultEl.textContent.trim();
+		}
+	}
 }
