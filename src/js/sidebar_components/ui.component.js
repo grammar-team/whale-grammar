@@ -37,7 +37,7 @@ function renderExtensionSection() {
 	sectionEl.className = `sc extension-introduce`;
 	sectionEl.innerHTML = `
 		<div class="section-content">
-			<img src="${imgSrc}" alt="whale-contest" />			
+			<a href="https://whale.naver.com/contest" target="_blank"><img src="${imgSrc}" alt="whale-contest" /></a>			
 			<p class="title">웨일 확장앱 콘테스트 2019</p>
 			<p class="description">본 확장앱은 웨일 확장앱 콘테스트 출품작입니다.</p>
 		</div>
