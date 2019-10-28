@@ -26,4 +26,6 @@ document.addEventListener(`DOMContentLoaded`, function() {
 	const sectionEl = document.querySelector(`#grammar_checker`);
 	const controller = constructComponentController(sectionEl);
 	transformDisplayComponents(sectionEl);
+
+	const port = whale.runtime.connect({ name: `grammar-sidebar` });
 });
