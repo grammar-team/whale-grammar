@@ -50,3 +50,25 @@ export function injectIntroduceSection(nodeEl) {
 
 	nodeEl.parentElement.insertBefore(sectionEl, nodeEl.nextSibling);
 }
+export function transformServiceLogo() {
+	const imgEl = document.createElement(`img`);
+	imgEl.src = whale.runtime.getURL(`image/naver_logo.png`);
+	imgEl.alt = `NAVER`;
+	imgEl.className = `whale-grammar-naver`;
+
+	const headerEl = document.querySelector(`.api_title_area`);
+	headerEl.appendChild(imgEl);
+
+	const titleEl = headerEl.querySelector(`.api_title`);
+	const { textContent } = titleEl.firstChild;
+	titleEl.firstChild.textContent = textContent.replace(`네이버`, ``).trim();
+}
+
+export function transformDisplayComponents() {
+	const sectionEl = document.querySelector(`#grammar_checker`);
+	duplicateInspectButton(sectionEl);
+	injectIntroduceSection(sectionEl);
+
+	bindEventToNAVER();
+	transformServiceLogo();
+}

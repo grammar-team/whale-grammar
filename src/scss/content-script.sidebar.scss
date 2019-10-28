@@ -19,6 +19,19 @@ body.whale-grammar {
       .api_banner_wrap {
         display: none;
       }
+      .api_title_area {
+        h2 {
+          padding-left: 98px;
+        }
+        .whale-grammar-naver {
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 18px;
+          height: 14px;
+          margin-top: -6px;
+        }
+      }
       .inspection_bx {
         display: block !important;
 

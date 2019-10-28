@@ -1,8 +1,4 @@
-import {
-	duplicateInspectButton,
-	bindEventToNAVER,
-	injectIntroduceSection
-} from "./sidebar_components/ui.component";
+import { transformDisplayComponents } from "./sidebar_components/ui.component";
 
 function isSidebar() {
 	const { dataset } = document.documentElement;
@@ -27,9 +23,5 @@ document.addEventListener(`DOMContentLoaded`, function() {
 	const bodyEl = document.querySelector(`body`);
 	bodyEl.classList.add(`whale-grammar`);
 
-	const sectionEl = document.querySelector(`#grammar_checker`);
-	duplicateInspectButton(sectionEl);
-	bindEventToNAVER();
-
-	injectIntroduceSection(sectionEl);
+	transformDisplayComponents();
 });
