@@ -63,4 +63,55 @@ body.whale-grammar {
       }
     }
   }
+
+  section.extension-introduce {
+    display: block !important;
+
+    .section-content {
+      margin-top: 10px !important;
+      padding: 12px 18px;
+      border-top: 1px solid #e2e5e8;
+      background-color: #fff;
+
+      img {
+        display: block;
+        height: 12px;
+        margin-top: 3px;
+      }
+      .title {
+        max-height: 6.9rem;
+        -webkit-line-clamp: 3;
+        font-size: 1.6rem;
+        line-height: 2.3rem;
+        color: #424242;
+        letter-spacing: -.3px;
+        margin-top: 5px;
+      }
+    }
+  }
+  .section-buttons {
+    list-style: none;
+    margin: 0;
+    padding: 12px 18px;
+    overflow: hidden;
+    background-color: #f8fafb;
+    border-top: 1px solid #ecf0f2;
+    border-bottom: 1px solid #e2e5e8;
+    text-align: center;
+
+    li {
+      display: inline;
+
+      a {
+        display: inline-block;
+        color: #8f8f8f;
+        font-size: 1.4rem;
+        margin: 0 1rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
