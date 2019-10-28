@@ -22,6 +22,10 @@ function duplicateInspectButton(parentEl) {
 
 	buttonEl.parentNode.insertBefore(nodeEl, buttonEl);
 }
+function bindEventToNAVER() {
+	const aEl = document.querySelector(`.service_logo`);
+	aEl.target = `_blank`;
+}
 
 document.addEventListener(`DOMContentLoaded`, function() {
 	if(isSidebar() === false) {
@@ -33,4 +37,5 @@ document.addEventListener(`DOMContentLoaded`, function() {
 
 	const sectionEl = document.querySelector(`#grammar_checker`);
 	duplicateInspectButton(sectionEl);
+	bindEventToNAVER();
 });
