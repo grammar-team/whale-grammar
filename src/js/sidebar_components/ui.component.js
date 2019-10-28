@@ -23,11 +23,11 @@ function renderExtensionSection() {
 	sectionEl.innerHTML = `
 		<div class="section-content">
 			<img src="${imgSrc}" alt="whale-contest" />			
-			<p class="title">웨일 확장앱 콘테스트 2019 출품작</p>
-			<p class="description"></p>
+			<p class="title">웨일 확장앱 콘테스트 2019</p>
+			<p class="description">본 확장앱은 웨일 확장앱 콘테스트 출품작입니다.</p>
 		</div>
 		<ul class="section-buttons">
-			<li><a href="#">개발자</a></li>
+			<li><a href="#">사용안내</a></li>
 			<li><a href="#">버그신고</a></li>
 			<li><a href="#">리뷰 남기기</a></li>
 		</ul>
@@ -37,5 +37,16 @@ function renderExtensionSection() {
 }
 export function injectIntroduceSection(nodeEl) {
 	const sectionEl = renderExtensionSection();
+	const aEls = sectionEl.querySelectorAll(`a`);
+	aEls.forEach(aEl => {
+		aEl.addEventListener(`click`, function(e) {
+			e.preventDefault();
+			whale.runtime.sendMessage({
+				action: `openURL`,
+				data: { url: this.href }
+			});
+		});
+	});
+
 	nodeEl.parentElement.insertBefore(sectionEl, nodeEl.nextSibling);
 }
