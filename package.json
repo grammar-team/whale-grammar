@@ -28,5 +28,7 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.0.8"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@webcomponents/custom-elements": "^1.3.0"
+  }
 }

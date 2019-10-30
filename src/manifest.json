@@ -32,6 +32,12 @@
       "js": ["js/content-script.sidebar.js"],
       "all_frames": false,
       "run_at": "document_start"
+    }, {
+      "matches": ["http://*/*", "https://*/*"],
+      "css": ["css/content-script.inspection.css"],
+      "js": ["js/content-script.inspection.js"],
+      "all_frames": false,
+      "run_at": "document_start"
     }
   ],
 
