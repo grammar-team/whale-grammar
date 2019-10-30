@@ -8,7 +8,7 @@ class GrammarMirror extends HTMLElement {
 		});
 
 		this.render = this.render.bind(this);
-		this.resetStyles = this.resetStyles.bind(this);
+		this.reset = this.reset.bind(this);
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
 
@@ -21,8 +21,9 @@ class GrammarMirror extends HTMLElement {
 		this.shadowRoot.appendChild(this.mirrorEl);
 	}
 
-	resetStyles() {
+	reset() {
 		this.mirrorEl.style.cssText = null;
+		this.mirrorEl.innerText = ``;
 	}
 	setStyle(key, value) {
 		this.mirrorEl.style.setProperty(key, value);

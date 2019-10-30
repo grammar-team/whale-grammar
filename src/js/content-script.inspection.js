@@ -1,76 +1,75 @@
 import "@webcomponents/custom-elements";
-import GrammarExtension from "./inspection_components/grammer-extension.element";
+import GrammarExtension, { findParent } from "./inspection_components/grammer-extension.element";
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
-import styleCloneAttributes from "./inspection_components/clone.styles";
+import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/grammar-mirror.functions";
+import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const EVENT_LISTENER = {
 	mirrorEl: null,
 	extensionEl: null,
-	activeEl: null,
+	lastActiveEl: null,
 
-	_attachedInputListener: null,
+	port: null,
+	textAreaObserver: null,
+	textAreaInputListener: null,
 
-	styleObserverCallback: function(mutation) {
-		let isStyleChanged = false;
-		mutation.forEach(e => {
-			if(e.attributeName === `style`) {
-				isStyleChanged = true;
-			}
-		});
+	_isNeedReset: function(nodeEl) {
+		if(
+			this.lastActiveEl &&
+			(
+				nodeEl.nodeName === `TEXTAREA` ||
+				nodeEl.contentEditable === `${true}`
+			) &&
+			nodeEl !== this.lastActiveEl
+		)
+			return true;
 
-		if(isStyleChanged)
-			this._cloneElementStyles();
+		return false;
 	},
-
-	_cloneElementStyles: function() {
-		this.mirrorEl.resetStyles();
-
-		const computedStyles = window.getComputedStyle(this.activeEl);
-		styleCloneAttributes.forEach(e => {
-			const style = computedStyles.getPropertyValue(`${e}`);
-			if(style.length > 0) {
-				this.mirrorEl.setStyle(e, style);
-			}
-		});
+	_injectExtensionElement: function(activeElement) {
+		this.extensionEl = renderExtensionElement();
+		const parentEl = findProperParent(activeElement.parentElement);
+		parentEl.appendChild(this.extensionEl);
 	},
-	_onInputTextArea: function(e) {
-		const { value } = e.target;
-		this.mirrorEl.setText(value);
+	initializeListener: function() {
+		this.port = whale.runtime.connect({ name: `grammar-inspection` });
+		this.mirrorEl = renderMirrorElement();
+		document.documentElement.appendChild(this.mirrorEl);
 	},
 	onDocumentFocused: function() {
-		if(this.mirrorEl === null) {
-			this.mirrorEl = document.createElement(`grammar-mirror`);
-			this.mirrorEl.dataset.generated = `whale-grammar`;
-			document.documentElement.appendChild(this.mirrorEl);
-		}
-
 		const { activeElement } = document;
-		if(this.activeEl && activeElement !== this.activeEl) {
-			/* TODO: Destructor 만들어야함 */
-			this.activeEl.removeEventListener(`input`, this._attachedInputListener)
-			STYLE_OBSERVER.disconnect();
+		if(this.lastActiveEl === null) {
+			this._injectExtensionElement(activeElement);
+		}
+		if(this._isNeedReset(activeElement)) {
+			if(this.extensionEl) this.extensionEl.remove();
+			if(this.textAreaObserver) { this.textAreaObserver.disconnect(); }
+			this.lastActiveEl.removeEventListener(`input`, this.textAreaInputListener);
+			this._injectExtensionElement(activeElement);
 		}
 
 		if(activeElement.nodeName === `TEXTAREA`) {
-			this.activeEl = activeElement;
-			this._cloneElementStyles();
-
-			this._attachedInputListener = e => this._onInputTextArea(e);
-			this.activeEl.addEventListener(`input`, this._attachedInputListener);
-			STYLE_OBSERVER.observe(this.activeEl, {
-				attributes: true
+			const { observer, eventListener } = onTextAreaFocused({
+				activeEl: activeElement,
+				mirrorEl: this.mirrorEl,
+				extensionEl: this.extensionEl,
+				port: this.port
 			});
+			this.textAreaObserver = observer;
+			this.textAreaInputListener = eventListener;
 		}
+
+		this.lastActiveEl = activeElement;
 	}
 };
-const STYLE_OBSERVER = new MutationObserver(mutation => EVENT_LISTENER.styleObserverCallback(mutation));
 
 window.addEventListener(`load`, function() {
 	window.customElements.define(`grammar-extension`, GrammarExtension, { extends: `div` });
 	window.customElements.define(`grammar-mirror`, GrammarMirror, { extends: `div` });
 });
 document.addEventListener(`DOMContentLoaded`, function() {
+	EVENT_LISTENER.initializeListener();
 	document.addEventListener(`focusin`, e => {
 		EVENT_LISTENER.onDocumentFocused(e);
 	}, true);
