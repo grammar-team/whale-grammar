@@ -1,5 +1,5 @@
 import "@webcomponents/custom-elements";
-import GrammarExtension, { findParent } from "./inspection_components/grammer-extension.element";
+import GrammarExtension from "./inspection_components/grammer-extension.element";
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/grammar-mirror.functions";

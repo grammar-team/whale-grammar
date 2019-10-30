@@ -24,52 +24,30 @@ function getExtension(path) {
 	var name = path.split(`.`);
 	return name[name.length - 1];
 }
-function getEntries(dir, results) {
-	return new Promise((resolve, reject) => {
-		fs.readdir(dir, function(err, list) {
-			if (err) {
-				reject(err);
+
+function generateEntries(dir, results) {
+	var fileList = fs.readdirSync(dir);
+	for(var i = 0; i < fileList.length; i++) {
+		var file = `${dir}/${fileList[i]}`;
+		var stat = fs.statSync(file);
+		if(stat && stat.isDirectory()) {
+			generateEntries(file, results);
+		} else {
+			if(`${file}`.match(/.*\.(jsx?|s?css)$/)) {
+				var label = file.replace(`/scss/`, `/css/`);
+				var ext = getExtension(label).length + 1;
+				var name = label.substring(srcPath.length + 1, label.length - ext);
+
+				results[name] = file;
 			}
-
-			var i = 0;
-			(function next() {
-				var file = list[i++];
-				if (!file) {
-					return resolve(results
-						.filter(item => item.match && item.match(/.*\.(js|s?css)$/))
-						.map((item) => {
-							var label = item.replace(`/scss/`, `/css/`);
-							var ext = getExtension(label).length + 1;
-
-							return {
-								name: label.substring(srcPath.length + 1, label.length - ext),
-								path: item
-							}
-						}
-					).reduce((memo, item) => {
-						memo[item.name] = item.path
-						return memo;
-					}, {}));
-				}
-				file = `${dir}/${file}`;
-				fs.stat(file, function(err, stat) {
-					if (stat && stat.isDirectory()) {
-						getEntries(file, results).then(res => {
-							results = results.concat(res);
-						next();
-					});
-					} else {
-						results.push(file);
-						next();
-					}
-				});
-			})();
-		});
-	});
-};
+		}
+	}
+}
 
 module.exports = async function(mode = `production`) {
-	let entryFiles = await getEntries(srcPath, []);
+	let entryFiles = {};
+	generateEntries(srcPath, entryFiles);
+
 	return {
 		mode: mode,
 		resolve: {

@@ -22,8 +22,7 @@
   },
 
   "background": {
-    "scripts": [ "js/background.js" ],
-    "persistent": false
+    "scripts": [ "js/background.js" ]
   },
   "content_scripts": [
     {
@@ -42,10 +41,12 @@
   ],
 
   "permissions": [
+    "https://m.search.naver.com",
     "tabs"
   ],
   "web_accessible_resources": [
     "image/contest_logo.png",
     "image/naver_logo.png"
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'"
 }
