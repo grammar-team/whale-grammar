@@ -27,6 +27,18 @@ const EVENT_LISTENER = {
 
 		return false;
 	},
+	_resetThings: function(activeElement) {
+		if(this.lastActiveEl === null) {
+			this._injectExtensionElement(activeElement);
+		} else if(this._isNeedReset(activeElement)) {
+			if(this.textAreaObserver) { this.textAreaObserver.disconnect(); }
+
+			if(this.extensionEl) this.extensionEl.remove();
+			this._injectExtensionElement(activeElement);
+
+			this.lastActiveEl.removeEventListener(`input`, this.textAreaInputListener);
+		}
+	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
 		const parentEl = findProperParent(activeElement.parentElement);
@@ -39,16 +51,8 @@ const EVENT_LISTENER = {
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
-		if(this.lastActiveEl === null) {
-			this._injectExtensionElement(activeElement);
-		}
-		if(this._isNeedReset(activeElement)) {
-			if(this.extensionEl) this.extensionEl.remove();
-			if(this.textAreaObserver) { this.textAreaObserver.disconnect(); }
-			this.lastActiveEl.removeEventListener(`input`, this.textAreaInputListener);
-			this._injectExtensionElement(activeElement);
-		}
 
+		this._resetThings(activeElement);
 		if(activeElement.nodeName === `TEXTAREA`) {
 			const { observer, eventListener } = onTextAreaFocused({
 				activeEl: activeElement,

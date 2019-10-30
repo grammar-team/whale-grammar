@@ -60,6 +60,7 @@ export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 
 	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
 	activeEl.addEventListener(`input`, eventListener);
+	activeEl.spellcheck = false;
 
 	return { observer, eventListener };
 }
