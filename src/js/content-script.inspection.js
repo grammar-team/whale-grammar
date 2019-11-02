@@ -2,9 +2,15 @@ import "@webcomponents/custom-elements";
 import GrammarExtension from "./inspection_components/grammer-extension.element";
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
+import { isSidebar } from "./sidebar_components/ui.component";
 import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/grammar-mirror.functions";
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
+const PORT_LISTENER = {
+	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
+		console.log(`listen:inspectContentResult`, options);
+	}
+};
 const EVENT_LISTENER = {
 	mirrorEl: null,
 	extensionEl: null,
@@ -45,9 +51,23 @@ const EVENT_LISTENER = {
 		parentEl.appendChild(this.extensionEl);
 	},
 	initializeListener: function() {
-		this.port = whale.runtime.connect({ name: `grammar-inspection` });
 		this.mirrorEl = renderMirrorElement();
 		document.documentElement.appendChild(this.mirrorEl);
+
+		this.port = whale.runtime.connect({ name: `grammar-inspection` });
+		this.port.onMessage.addListener(message => {
+			const { action, options } = message;
+			if(
+				PORT_LISTENER.hasOwnProperty(action) &&
+				typeof PORT_LISTENER[action] === `function`
+			) {
+				PORT_LISTENER[action](options, {
+					port: this.port,
+					mirrorEl: this.mirrorEl,
+					extensionEl: this.extensionEl
+				});
+			}
+		});
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
@@ -73,6 +93,10 @@ window.addEventListener(`load`, function() {
 	window.customElements.define(`grammar-mirror`, GrammarMirror, { extends: `div` });
 });
 document.addEventListener(`DOMContentLoaded`, function() {
+	if(isSidebar() === true) {
+		return;
+	}
+
 	EVENT_LISTENER.initializeListener();
 	document.addEventListener(`focusin`, e => {
 		EVENT_LISTENER.onDocumentFocused(e);
