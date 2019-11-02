@@ -39,6 +39,7 @@ const INSPECTION_LISTENER = {
 
 function onMessagePushQueue(message) {
 	EVENT_QUEUE = message;
+	whale.sidebarAction.show();
 }
 
 function SplitText(getText) {
@@ -70,12 +71,18 @@ whale.runtime.onConnect.addListener(function(port) {
 
 	PORT_LIST.push(port);
 
+	const onMessageCallback = function (message) {
+		whale.sidebarAction.show();
+		port.postMessage(message);
+	};
 	whale.runtime.onMessage.removeListener(onMessagePushQueue);
+	whale.runtime.onMessage.addListener(onMessageCallback);
 	port.onDisconnect.addListener(() => {
+		whale.runtime.onMessage.removeListener(onMessageCallback);
+
 		for(let i = 0; i < PORT_LIST.length; i++) {
-			if(PORT_LIST[i].name === port.name) {
+			if(PORT_LIST[i].name === port.name)
 				PORT_LIST.splice(i, 1);
-			}
 		}
 
 		if(PORT_LIST.length < 1) {
@@ -87,7 +94,6 @@ whale.runtime.onConnect.addListener(function(port) {
 		const { action, options } = EVENT_QUEUE;
 		const { text } = options;
 		const segmentedText = SplitText(text);
-
 		options.segmentedText = segmentedText;
 
 		port.postMessage({ action, options });

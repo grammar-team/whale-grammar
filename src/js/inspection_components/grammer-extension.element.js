@@ -8,6 +8,7 @@ class GrammarExtension extends HTMLElement {
 		});
 
 		this.render = this.render.bind(this);
+		this.bindClickEvents = this.bindClickEvents.bind(this);
 		this.setSizePosition = this.setSizePosition.bind(this);
 		this.addUnderlines = this.addUnderlines.bind(this);
 		this.resetUnderlines = this.resetUnderlines.bind(this);
@@ -25,18 +26,38 @@ class GrammarExtension extends HTMLElement {
 			<link rel="stylesheet" href="${cssFile}" />
 			<div role="grammar-underline"></div>
 			<div role="grammar-dot">
-				<a href="#" class="status">
+				<a href="#" class="status" id="grammar-open">
 					<img src="${checkImg}" alt="check" />
 				</a>
 				<span>
-					<a href="#" class="power-off"><img src="${powerOffImg}" alt="power-off" /></a>
+					<a href="#" class="power-off" id="grammar-off"><img src="${powerOffImg}" alt="power-off" /></a>
 				</span>
 			</div>
 		`;
+
 		this.underlineWrapEl = this.shadowRoot.querySelector(`[role="grammar-underline"]`);
 		this.dotEl = this.shadowRoot.querySelector(`[role="grammar-dot"]`);
+		this.bindClickEvents();
+	}
+	bindClickEvents() {
+		const openEl = this.shadowRoot.querySelector(`#grammar-open`);
+		openEl.addEventListener(`click`, e => {
+			e.preventDefault();
+			whale.runtime.sendMessage({
+				action: `setOriginalText`,
+				options: {
+					text: this.targetEl.value
+				}
+			});
+		});
+
+		const powerEl = this.shadowRoot.querySelector(`#grammar-off`);
+		powerEl.addEventListener(`click`, e => {
+			e.preventDefault();
+		});
 	}
 	setSizePosition(targetEl) {
+		this.targetEl = targetEl;
 		this.dataset.generated = `whale-grammar`;
 		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = targetEl;
 

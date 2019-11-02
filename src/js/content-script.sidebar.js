@@ -13,6 +13,9 @@ const EVENT_LISTENER = {
 		}
 		else {
 			controller.setText(`개발필요`);
+			for(let i in segmentedText) {
+				console.log(segmentedText[i]);
+			}
 		}
 
 		/*const { text } = options;
