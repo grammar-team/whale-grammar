@@ -2,6 +2,9 @@
 
 import { fetchJsonp } from "./background_components/jsonp.functions";
 
+const PORT_LIST = [];
+let EVENT_QUEUE = null;
+
 const INSPECTION_LISTENER = {
 	_filterErrorWords: (html) => {
 		const nodeEl = document.createElement(`div`);
@@ -34,6 +37,64 @@ const INSPECTION_LISTENER = {
 	}
 };
 
+function onMessagePushQueue(message) {
+	EVENT_QUEUE = message;
+}
+
+function SplitText(getText) {
+	const sentences = getText.replace(/(\.|\:|\!|\?|\n)(\n|\r|\r\n)*(?=[\s가-힣0-9])/gm, "$1$2|").split("|");
+	let textContainer = [];
+	let textCat = "";
+	let sum = 0;
+
+	for(let i in sentences) {
+		if(sum + sentences[i].length > 500) {
+			textContainer.push(textCat);
+			textCat = "";
+			sum = 0;
+		}
+		textCat += sentences[i];
+		sum += sentences[i].length;
+
+		if(i == sentences.length-1) {
+			textContainer.push(textCat);
+		}
+	}
+
+	return textContainer;
+}
+
+whale.runtime.onConnect.addListener(function(port) {
+	if(!port.name.includes(`grammar-sidebar-`))
+		return;
+
+	PORT_LIST.push(port);
+
+	whale.runtime.onMessage.removeListener(onMessagePushQueue);
+	port.onDisconnect.addListener(() => {
+		for(let i = 0; i < PORT_LIST.length; i++) {
+			if(PORT_LIST[i].name === port.name) {
+				PORT_LIST.splice(i, 1);
+			}
+		}
+
+		if(PORT_LIST.length < 1) {
+			whale.runtime.onMessage.addListener(onMessagePushQueue);
+		}
+	});
+
+	if(EVENT_QUEUE !== null) {
+		const { action, options } = EVENT_QUEUE;
+		const { text } = options;
+		const segmentedText = SplitText(text);
+
+		options.segmentedText = segmentedText;
+
+		port.postMessage({ action, options });
+		EVENT_QUEUE = null;
+	}
+});
+
 whale.runtime.onConnect.addListener(function(port) {
 	if(port.name !== `grammar-inspection`)
 		return;
@@ -47,3 +108,5 @@ whale.runtime.onConnect.addListener(function(port) {
 			INSPECTION_LISTENER[action](port, options);
 	});
 });
+
+whale.runtime.onMessage.addListener(onMessagePushQueue);

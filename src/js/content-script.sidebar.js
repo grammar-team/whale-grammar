@@ -6,10 +6,20 @@ import {
 
 const EVENT_LISTENER = {
 	setOriginalText: function(options, controller) {
-		const { text } = options;
-		if(typeof text === typeof `string`) {
+		const { segmentedText } = options;
+		if(segmentedText.length == 1) {
+			const [ text ] = segmentedText;
 			controller.setText(text);
 		}
+		else {
+			controller.setText(`개발필요`);
+		}
+
+		/*const { text } = options;
+
+		if(typeof text === typeof `string`) {
+			controller.setText(text);
+		}*/
 	}
 };
 
@@ -25,7 +35,8 @@ document.addEventListener(`DOMContentLoaded`, function() {
 	const controller = constructComponentController(sectionEl);
 	transformDisplayComponents(sectionEl);
 
-	const port = whale.runtime.connect({ name: `grammar-sidebar` });
+	const portKey = parseInt(Math.random() * 10000, 10);
+	const port = whale.runtime.connect({ name: `grammar-sidebar-${portKey}` });
 	port.onMessage.addListener(message => {
 		const { action, options } = message;
 		if(
