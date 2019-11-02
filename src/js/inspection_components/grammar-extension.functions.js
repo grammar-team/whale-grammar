@@ -6,7 +6,7 @@ export function renderExtensionElement() {
 export function findProperParent(nodeEl) {
 	const position = window.getComputedStyle(nodeEl).getPropertyValue(`position`);
 	if(
-		[`absolute`, `relative`].includes(position) ||
+		[`absolute`, `relative`, `fixed`].includes(position) ||
 		document.body === nodeEl
 	) {
 		return nodeEl;

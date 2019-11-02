@@ -16,7 +16,7 @@ function cloneElementStyles(targetEl, mirrorEl) {
 		}
 	});
 }
-function attachStyleObserver(targetEl, mirrorEl) {
+function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 	const observer = new window.MutationObserver(mutation => {
 		let isStyleChanged = false;
 		mutation.forEach(e => {
@@ -25,8 +25,10 @@ function attachStyleObserver(targetEl, mirrorEl) {
 			}
 		});
 
-		if(isStyleChanged)
+		if(isStyleChanged) {
 			cloneElementStyles(targetEl, mirrorEl);
+			extensionEl.setSizePosition(targetEl);
+		}
 	});
 
 	observer.observe(targetEl, {
@@ -42,8 +44,12 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 		mirrorEl.setText(value);
 
 		clearTimeout(timeout);
+		if(!value) {
+			extensionEl.resetUnderlines();
+			return;
+		}
+
 		timeout = window.setTimeout(function() {
-			console.log(`AXDC`);
 			port.postMessage({
 				action: `inspectContent`,
 				options: { text: value }
@@ -56,7 +62,7 @@ export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 
 	mirrorEl.setText(activeEl.value);
 	cloneElementStyles(activeEl, mirrorEl);
-	const observer = attachStyleObserver(activeEl, mirrorEl);
+	const observer = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 
 	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
 	activeEl.addEventListener(`input`, eventListener);

@@ -8,3 +8,11 @@ html > grammar-mirror[data-generated="whale-grammar"] {
   height: 0;
   //overflow: hidden;
 }
+
+html grammar-extension[data-generated="whale-grammar"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}

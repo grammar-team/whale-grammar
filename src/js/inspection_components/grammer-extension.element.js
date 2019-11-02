@@ -2,10 +2,74 @@ class GrammarExtension extends HTMLElement {
 	constructor() {
 		super();
 
-		const c = this.attachShadow({
+		this.attachShadow({
 			mode: `open`,
 			delegatesFocus: true
 		});
+
+		this.render = this.render.bind(this);
+		this.setSizePosition = this.setSizePosition.bind(this);
+		this.addUnderlines = this.addUnderlines.bind(this);
+		this.resetUnderlines = this.resetUnderlines.bind(this);
+		this.removeUnderline = this.removeUnderline.bind(this);
+
+		this.render();
+	}
+
+	render() {
+		const cssFile = whale.runtime.getURL(`css/grammar-extension.element.css`);
+		const checkImg = whale.runtime.getURL(`image/check.svg`);
+		const powerOffImg = whale.runtime.getURL(`image/power.svg`);
+
+		this.shadowRoot.innerHTML = `
+			<link rel="stylesheet" href="${cssFile}" />
+			<div role="grammar-underline"></div>
+			<div role="grammar-dot">
+				<a href="#" class="status">
+					<img src="${checkImg}" alt="check" />
+				</a>
+				<span>
+					<a href="#" class="power-off"><img src="${powerOffImg}" alt="power-off" /></a>
+				</span>
+			</div>
+		`;
+		this.underlineWrapEl = this.shadowRoot.querySelector(`[role="grammar-underline"]`);
+		this.dotEl = this.shadowRoot.querySelector(`[role="grammar-dot"]`);
+	}
+	setSizePosition(targetEl) {
+		this.dataset.generated = `whale-grammar`;
+		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = targetEl;
+
+		this.style.top = `${offsetTop}px`;
+		this.style.left = `${offsetLeft}px`;
+
+		this.underlineWrapEl.style.width = `${offsetWidth}px`;
+		this.underlineWrapEl.style.height = `${offsetHeight}px`;
+
+		this.dotEl.style.top = `${offsetHeight - 36}px`;
+		this.dotEl.style.left = `${offsetWidth - 36}px`;
+	}
+	addUnderlines(underlineList) {
+		this.resetUnderlines();
+		underlineList.forEach((rect, index) => {
+			const { height, width, left, top } = rect;
+			const nodeEl = document.createElement(`span`);
+
+			nodeEl.dataset.index = `${index}`;
+			nodeEl.style.width = `${width}px`;
+			nodeEl.style.top = `${top + (height - 1)}px`;
+			nodeEl.style.left = `${left}px`;
+
+			this.underlineWrapEl.appendChild(nodeEl);
+		});
+	}
+	removeUnderline(index) {
+		const nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
+		if(nodeEl)
+			nodeEl.remove();
+	}
+	resetUnderlines() {
+		this.underlineWrapEl.innerHTML = ``;
 	}
 }
 
