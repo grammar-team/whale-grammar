@@ -12,6 +12,8 @@ class GrammarMirror extends HTMLElement {
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
 
+		this.measureWordsPositions = this.measureWordsPositions.bind(this);
+
 		this.render();
 	}
 	render() {
@@ -34,6 +36,42 @@ class GrammarMirror extends HTMLElement {
 		}
 
 		this.mirrorEl.innerText = `${text}`;
+	}
+
+	measureWordsPositions(findList) {
+		if(findList.length < 1) {
+			return [];
+		}
+
+		const wordList = this.mirrorEl.innerText.split(` `);
+		const range = document.createRange();
+		let index = 0,
+			start = 0,
+			end = 0;
+
+		const positionList = [];
+		wordList.forEach(word => {
+			end = start + word.length;
+			if(index >= findList.length) {
+				return;
+			}
+
+			range.setStart(this.mirrorEl.firstChild, start);
+			range.setEnd(this.mirrorEl.firstChild, end);
+			if(word === findList[index]) {
+				const rects = range.getClientRects();
+				for(let i = 0; i < rects.length; i++) {
+					const { height, width, left, top } = rects[i];
+					positionList.push({ height, width, left, top });
+				}
+
+				index += 1;
+			}
+
+			start = end + 1;
+		});
+
+		return positionList;
 	}
 }
 

@@ -8,7 +8,11 @@ import { renderExtensionElement, findProperParent } from "./inspection_component
 
 const PORT_LISTENER = {
 	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
-		console.log(`listen:inspectContentResult`, options);
+		const { error_count, error_words } = options;
+		const wordPositionList = mirrorEl.measureWordsPositions(error_words);
+		console.log(`listen:inspectContentResult`, wordPositionList);
+
+		extensionEl.addUnderlines(wordPositionList);
 	}
 };
 const EVENT_LISTENER = {
@@ -47,6 +51,8 @@ const EVENT_LISTENER = {
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
+		this.extensionEl.setSizePosition(activeElement);
+
 		const parentEl = findProperParent(activeElement.parentElement);
 		parentEl.appendChild(this.extensionEl);
 	},
