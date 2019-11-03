@@ -11,6 +11,7 @@ class GrammarExtension extends HTMLElement {
 		this.bindClickEvents = this.bindClickEvents.bind(this);
 		this.setSizePosition = this.setSizePosition.bind(this);
 		this.addUnderlines = this.addUnderlines.bind(this);
+		this.modifyUnderlines = this.modifyUnderlines.bind(this);
 		this.resetUnderlines = this.resetUnderlines.bind(this);
 		this.removeUnderline = this.removeUnderline.bind(this);
 
@@ -81,8 +82,8 @@ class GrammarExtension extends HTMLElement {
 	}
 	addUnderlines(underlineList) {
 		this.resetUnderlines();
-		underlineList.forEach((rect, index) => {
-			const { height, width, left, top } = rect;
+		underlineList.forEach(rect => {
+			const { height, width, left, top, index } = rect;
 			const nodeEl = document.createElement(`span`);
 
 			nodeEl.dataset.index = `${index}`;
@@ -93,8 +94,27 @@ class GrammarExtension extends HTMLElement {
 			this.underlineWrapEl.appendChild(nodeEl);
 		});
 	}
+	modifyUnderlines(underlineList, missingList) {
+		underlineList.forEach(rect => {
+			const { height, width, left, top, index } = rect;
+			let nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
+			if(!nodeEl) {
+				nodeEl = document.createElement(`span`);
+				nodeEl.dataset.index = `${index}`;
+
+				this.underlineWrapEl.appendChild(nodeEl);
+			}
+
+			nodeEl.style.width = `${width}px`;
+			nodeEl.style.top = `${top + (height - 1)}px`;
+			nodeEl.style.left = `${left}px`;
+		});
+		missingList.forEach(index => {
+			this.removeUnderline(index);
+		});
+	}
 	removeUnderline(index) {
-		const nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
+		const nodeEl = this.underlineWrapEl.querySelector(`span[data-index^="${index}"]`);
 		if(nodeEl)
 			nodeEl.remove();
 	}

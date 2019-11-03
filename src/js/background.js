@@ -22,9 +22,10 @@ const INSPECTION_LISTENER = {
 	},
 	inspectContent: function(port, options) {
 		const { text } = options;
+		const encodedText = window.encodeURIComponent(text);
 		const host = `https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy`;
 		const where = `whale-grammar`;
-		const url = `${host}?q=${text}&where=${where}&color_blindness=0`;
+		const url = `${host}?q=${encodedText}&where=${where}&color_blindness=0`;
 
 		port.postMessage({
 			action: `startInspection`,

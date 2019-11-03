@@ -28,6 +28,9 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 		if(isStyleChanged) {
 			cloneElementStyles(targetEl, mirrorEl);
 			extensionEl.setSizePosition(targetEl);
+
+			const { positionList } = mirrorEl.measureTextPositions();
+			extensionEl.addUnderlines(positionList);
 		}
 	});
 
@@ -48,6 +51,9 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 			extensionEl.resetUnderlines();
 			return;
 		}
+
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		extensionEl.modifyUnderlines(positionList, missingIndexList);
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {

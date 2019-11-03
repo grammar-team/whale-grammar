@@ -4,6 +4,7 @@ class GrammarMirror extends HTMLElement {
 	constructor() {
 		super();
 
+		this.findList = [];
 		this.attachShadow({
 			mode: `open`,
 			delegatesFocus: true
@@ -42,7 +43,10 @@ class GrammarMirror extends HTMLElement {
 
 
 	measureTextPositions(findList) {
-		if(findList.length < 1) {
+		if(findList !== undefined)
+			this.findList = findList;
+
+		if(this.findList.length < 1) {
 			return {
 				positionList: [],
 				missingIndexList: []
@@ -54,7 +58,7 @@ class GrammarMirror extends HTMLElement {
 		const range = document.createRange();
 		const positionList = [];
 		const missingIndexList = [];
-		findList.forEach((text, index) => {
+		this.findList.forEach((text, index) => {
 			const start = findStringInText(innerText, text, textIndex);
 			const end = start + text.length;
 			if(start === -1) {
@@ -62,12 +66,14 @@ class GrammarMirror extends HTMLElement {
 				return;
 			}
 
+			console.log({ start, text, innerText });
+
 			range.setStart(this.mirrorEl.firstChild, start);
 			range.setEnd(this.mirrorEl.firstChild, end);
 			const rectList = range.getClientRects();
 			for(let i = 0; i < rectList.length; i++) {
 				const { height, width, left, top } = rectList[i];
-				positionList.push({ height, width, left, top });
+				positionList.push({ height, width, left, top, text, index: `${index}-${i}` });
 			}
 
 			textIndex = end;
@@ -75,7 +81,7 @@ class GrammarMirror extends HTMLElement {
 
 		return {
 			positionList, missingIndexList
-		}
+		};
 	}
 }
 
