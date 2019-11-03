@@ -49,6 +49,7 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 			return;
 		}
 
+		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
 			port.postMessage({
 				action: `inspectContent`,

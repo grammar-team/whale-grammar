@@ -49,6 +49,7 @@
     "image/naver_logo.png",
     "image/check.svg",
     "image/power.svg",
+    "image/loading.svg",
     "css/grammar-extension.element.css"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'"

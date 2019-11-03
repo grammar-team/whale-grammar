@@ -26,6 +26,10 @@ const INSPECTION_LISTENER = {
 		const where = `whale-grammar`;
 		const url = `${host}?q=${text}&where=${where}&color_blindness=0`;
 
+		port.postMessage({
+			action: `startInspection`,
+			options: {  }
+		});
 		fetchJsonp(url).then(data => {
 			const { errata_count, origin_html } = data;
 			const error_words = this._filterErrorWords(origin_html);

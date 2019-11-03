@@ -1,5 +1,5 @@
 import "@webcomponents/custom-elements";
-import GrammarExtension from "./inspection_components/grammer-extension.element";
+import GrammarExtension from "./inspection_components/grammar-extension.element";
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { isSidebar } from "./sidebar_components/ui.component";
@@ -7,12 +7,16 @@ import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
+	startInspection: function(options, { port, extensionEl }) {
+		extensionEl.setDotStatus({ status: `loading` });
+	},
 	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
 		const { error_count, error_words } = options;
 		const wordPositionList = mirrorEl.measureWordsPositions(error_words);
 		console.log(`listen:inspectContentResult`, wordPositionList);
 
 		extensionEl.addUnderlines(wordPositionList);
+		extensionEl.setDotStatus({ error_count, status: `default` });
 	}
 };
 const EVENT_LISTENER = {

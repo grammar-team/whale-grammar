@@ -18,7 +18,7 @@ div[role="grammar-dot"] {
   display: block;
   width: 22px;
   height: 22px;
-  background-color: #F5F5F5;
+  background-color: transparent;
   font-size: 0;
   pointer-events: auto;
 
@@ -31,6 +31,18 @@ div[role="grammar-dot"] {
     border-radius: 11px;
     z-index: 10;
     overflow: hidden;
+    text-decoration: none;
+
+    span[role="grammar-error-count"] {
+      font-size: 12px;
+      font-weight: bold;
+      font-family: sans-serif;
+      color: #FFF;
+      text-align: center;
+      line-height: 1;
+      text-decoration: none;
+      padding: 6px 0 0 0;
+    }
 
     &:hover::after {
       content: '';
@@ -49,11 +61,11 @@ div[role="grammar-dot"] {
     margin: 3px;
     padding: 0;
   }
-  > span {
+  > div {
     display: none;
     position: absolute;
     top: -4px;
-    left: -40px;
+    left: -41px;
     width: 68px;
     height: 30px;
     background-color: #FFF;
@@ -71,6 +83,19 @@ div[role="grammar-dot"] {
       margin: 4px;
       padding: 0;
       z-index: 7;
+      border-radius: 11px;
+      overflow: hidden;
+
+      &:hover::after {
+        content: '';
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(0,0,0,.03);
+      }
     }
 
     &::after {
@@ -83,13 +108,47 @@ div[role="grammar-dot"] {
       top: 50%;
       left: 50%;
       margin-top: -7px;
-      margin-left: -4px;
+      margin-left: -3px;
     }
   }
 
   &:hover {
-    > span {
+    > div {
       display: block;
+    }
+  }
+  &:not([data-status]) {
+    img[alt="loading"],
+    span[role="grammar-error-count"] {
+      display: none;
+    }
+  }
+  &[data-status="loading"] {
+    img[alt="check"],
+    span[role="grammar-error-count"] {
+      display: none;
+    }
+  }
+
+  &[data-error] {
+    a.status {
+      background-color: #ff5757;
+    }
+    img[alt="loading"],
+    img[alt="check"] {
+      display: none !important;
+    }
+    span[role="grammar-error-count"] {
+      display: block;
+    }
+  }
+  &[data-error][data-status="loading"] {
+    img[alt="check"],
+    span[role="grammar-error-count"] {
+      display: none;
+    }
+    img[alt="loading"] {
+      display: inline-block !important;
     }
   }
 }
