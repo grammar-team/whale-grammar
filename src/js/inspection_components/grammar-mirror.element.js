@@ -14,6 +14,7 @@ class GrammarMirror extends HTMLElement {
 		this.reset = this.reset.bind(this);
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
+		this.setHTML = this.setHTML.bind(this);
 
 		this.measureTextPositions = this.measureTextPositions.bind(this);
 
@@ -39,6 +40,9 @@ class GrammarMirror extends HTMLElement {
 		}
 
 		this.mirrorEl.innerText = `${text}`;
+	}
+	setHTML(html) {
+		this.mirrorEl.innerHTML = `${html}`;
 	}
 
 	_getCalculatedRange(nodeEl, { start, end }) {

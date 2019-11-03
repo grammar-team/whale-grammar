@@ -81,13 +81,66 @@ function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
 }
 export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	mirrorEl.reset();
-	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 	cloneElementStyles(activeEl, mirrorEl);
+	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 
-	const observer = attachStyleObserver(activeEl, mirrorEl, extensionEl);
+	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
 	activeEl.addEventListener(`input`, eventListener);
 	activeEl.spellcheck = false;
 
-	return { observer, eventListener };
+	return { styleObserver, eventListener };
+}
+
+function onEditableChanged(mirrorEl, extensionEl, port) {
+	let timeout;
+	return function(e) {
+		const { innerText, innerHTML } = e.target;
+		mirrorEl.setHTML(innerHTML);
+
+		clearTimeout(timeout);
+		if(!innerText) {
+			extensionEl.reset();
+			return;
+		}
+		//
+		// const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		// extensionEl.modifyUnderlines(positionList, missingIndexList);
+		//
+		// extensionEl.setDotStatus({ status: `loading` });
+		// timeout = window.setTimeout(function() {
+		// 	port.postMessage({
+		// 		action: `inspectContent`,
+		// 		options: { text: value }
+		// 	});
+		// }, 1600);
+	};
+}
+function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
+	const { innerText, innerHTML } = targetEl;
+	if(!innerText) {
+		extensionEl.resetUnderlines();
+		mirrorEl.setText(``);
+
+		return;
+	}
+
+	mirrorEl.setHTML(innerHTML);
+	// extensionEl.setDotStatus({ status: `loading` });
+	// port.postMessage({
+	// 	action: `inspectContent`,
+	// 	options: { text: value }
+	// });
+}
+export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port }) {
+	mirrorEl.reset();
+	cloneElementStyles(activeEl, mirrorEl);
+	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
+
+	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
+	const eventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	activeEl.addEventListener(`input`, eventListener);
+	activeEl.spellcheck = false;
+
+	return { styleObserver, eventListener };
 }

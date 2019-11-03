@@ -3,7 +3,9 @@ import GrammarExtension from "./inspection_components/grammar-extension.element"
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { isSidebar } from "./sidebar_components/ui.component";
-import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/grammar-mirror.functions";
+import {
+	renderMirrorElement, onTextAreaFocused, onEditableElementFocused
+} from "./inspection_components/grammar-mirror.functions";
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
@@ -24,8 +26,8 @@ const EVENT_LISTENER = {
 	lastActiveEl: null,
 
 	port: null,
-	textAreaObserver: null,
-	textAreaInputListener: null,
+	styleObserver: null,
+	inputListener: null,
 
 	_isEditableNode: function(nodeEl) {
 		if(
@@ -51,20 +53,24 @@ const EVENT_LISTENER = {
 		if(this.lastActiveEl === null) {
 			this._injectExtensionElement(activeElement);
 		} else if(this._isNeedReset(activeElement)) {
-			if(this.textAreaObserver) { this.textAreaObserver.disconnect(); }
+			if(this.styleObserver) { this.styleObserver.disconnect(); }
 
 			if(this.extensionEl) this.extensionEl.remove();
 			this._injectExtensionElement(activeElement);
 
-			this.lastActiveEl.removeEventListener(`input`, this.textAreaInputListener);
+			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 		}
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
 		this.extensionEl.setSizePosition(activeElement);
 
-		const parentEl = findProperParent(activeElement.parentElement);
-		parentEl.appendChild(this.extensionEl);
+		if(activeElement !== document.body) {
+			const parentEl = findProperParent(activeElement.parentElement);
+			parentEl.appendChild(this.extensionEl);
+		} else {
+			activeElement.parentElement.appendChild(this.extensionEl);
+		}
 	},
 	initializeListener: function() {
 		this.mirrorEl = renderMirrorElement();
@@ -95,15 +101,21 @@ const EVENT_LISTENER = {
 		}
 
 		this._resetThings(activeElement);
+		const options = {
+			activeEl: activeElement,
+			mirrorEl: this.mirrorEl,
+			extensionEl: this.extensionEl,
+			port: this.port
+		};
+
 		if(activeElement.nodeName === `TEXTAREA`) {
-			const { observer, eventListener } = onTextAreaFocused({
-				activeEl: activeElement,
-				mirrorEl: this.mirrorEl,
-				extensionEl: this.extensionEl,
-				port: this.port
-			});
-			this.textAreaObserver = observer;
-			this.textAreaInputListener = eventListener;
+			const { styleObserver, eventListener } = onTextAreaFocused(options);
+			this.styleObserver = styleObserver;
+			this.inputListener = eventListener;
+		} else if(activeElement.nodeName !== `INPUT`) {
+			const { styleObserver, eventListener } = onEditableElementFocused(options);
+			this.styleObserver = styleObserver;
+			this.inputListener = eventListener;
 		}
 
 		this.lastActiveEl = activeElement;
