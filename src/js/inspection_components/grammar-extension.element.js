@@ -8,6 +8,7 @@ class GrammarExtension extends HTMLElement {
 		});
 
 		this.render = this.render.bind(this);
+		this.reset = this.reset.bind(this);
 		this.bindClickEvents = this.bindClickEvents.bind(this);
 		this.setSizePosition = this.setSizePosition.bind(this);
 		this.addUnderlines = this.addUnderlines.bind(this);
@@ -66,6 +67,15 @@ class GrammarExtension extends HTMLElement {
 			e.preventDefault();
 		});
 	}
+
+	reset() {
+		delete this.dotEl.dataset.status;
+		delete this.dotEl.dataset.error;
+
+		this.resetUnderlines();
+		this.errorCountEl.innerText = ``;
+	}
+
 	setSizePosition(targetEl) {
 		this.targetEl = targetEl;
 		this.dataset.generated = `whale-grammar`;

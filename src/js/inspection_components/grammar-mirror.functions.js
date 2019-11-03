@@ -48,7 +48,7 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 
 		clearTimeout(timeout);
 		if(!value) {
-			extensionEl.resetUnderlines();
+			extensionEl.reset();
 			return;
 		}
 
