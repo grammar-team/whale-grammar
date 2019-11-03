@@ -12,10 +12,10 @@ const PORT_LISTENER = {
 	},
 	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
 		const { error_count, error_words } = options;
-		const wordPositionList = mirrorEl.measureWordsPositions(error_words);
-		console.log(`listen:inspectContentResult`, wordPositionList);
+		const { positionList } = mirrorEl.measureTextPositions(error_words);
+		console.log(`listen:inspectContentResult`, positionList);
 
-		extensionEl.addUnderlines(wordPositionList);
+		extensionEl.addUnderlines(positionList);
 		extensionEl.setDotStatus({ error_count, status: `default` });
 	}
 };

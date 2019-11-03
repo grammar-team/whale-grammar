@@ -1,3 +1,5 @@
+import findStringInText from "./kmp.algorithm";
+
 class GrammarMirror extends HTMLElement {
 	constructor() {
 		super();
@@ -12,6 +14,7 @@ class GrammarMirror extends HTMLElement {
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
 
+		this.measureTextPositions = this.measureTextPositions.bind(this);
 		this.measureWordsPositions = this.measureWordsPositions.bind(this);
 
 		this.render();
@@ -38,40 +41,42 @@ class GrammarMirror extends HTMLElement {
 		this.mirrorEl.innerText = `${text}`;
 	}
 
-	measureWordsPositions(findList) {
+
+	measureTextPositions(findList) {
 		if(findList.length < 1) {
-			return [];
+			return {
+				positionList: [],
+				missingIndexList: []
+			};
 		}
 
-		const wordList = this.mirrorEl.innerText.split(` `);
+		let textIndex = 0;
+		const { innerText } = this.mirrorEl;
 		const range = document.createRange();
-		let index = 0,
-			start = 0,
-			end = 0;
-
 		const positionList = [];
-		wordList.forEach(word => {
-			end = start + word.length;
-			if(index >= findList.length) {
+		const missingIndexList = [];
+		findList.forEach((text, index) => {
+			const start = findStringInText(innerText, text, textIndex);
+			const end = start + text.length;
+			if(start === -1) {
+				missingIndexList.push(index);
 				return;
 			}
 
 			range.setStart(this.mirrorEl.firstChild, start);
 			range.setEnd(this.mirrorEl.firstChild, end);
-			if(word === findList[index]) {
-				const rects = range.getClientRects();
-				for(let i = 0; i < rects.length; i++) {
-					const { height, width, left, top } = rects[i];
-					positionList.push({ height, width, left, top });
-				}
-
-				index += 1;
+			const rectList = range.getClientRects();
+			for(let i = 0; i < rectList.length; i++) {
+				const { height, width, left, top } = rectList[i];
+				positionList.push({ height, width, left, top });
 			}
 
-			start = end + 1;
+			textIndex = end;
 		});
 
-		return positionList;
+		return {
+			positionList, missingIndexList
+		}
 	}
 }
 
