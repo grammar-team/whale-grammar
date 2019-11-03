@@ -7,7 +7,7 @@
     "cleanup": "rm -rf dist && mkdir dist",
     "copy": "cp -rip src/* dist/",
     "build": "./node_modules/.bin/webpack --mode=none",
-    "build:prod": "./node_modules/.bin/webpack",
+    "build:prod": "./node_modules/.bin/webpack --optimize-minimize",
     "build:watch": "npm run cleanup && npm run copy && ./node_modules/.bin/webpack --mode=none --watch",
     "eslint": "./node_modules/.bin/eslint"
   },
@@ -25,6 +25,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.0.8"
   },
