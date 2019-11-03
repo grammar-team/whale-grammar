@@ -27,13 +27,20 @@ const EVENT_LISTENER = {
 	textAreaObserver: null,
 	textAreaInputListener: null,
 
+	_isEditableNode: function(nodeEl) {
+		if(
+			nodeEl.nodeName === `TEXTAREA` ||
+			nodeEl.contentEditable === `${true}`
+		) {
+			return true;
+		}
+
+		return false;
+	},
 	_isNeedReset: function(nodeEl) {
 		if(
 			this.lastActiveEl &&
-			(
-				nodeEl.nodeName === `TEXTAREA` ||
-				nodeEl.contentEditable === `${true}`
-			) &&
+			this._isEditableNode(nodeEl) &&
 			nodeEl !== this.lastActiveEl
 		)
 			return true;
@@ -80,6 +87,12 @@ const EVENT_LISTENER = {
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
+		if(
+			this._isEditableNode(activeElement) === false ||
+			activeElement.offsetHeight < 50
+		) {
+			return;
+		}
 
 		this._resetThings(activeElement);
 		if(activeElement.nodeName === `TEXTAREA`) {
