@@ -58,13 +58,27 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 		}, 1600);
 	}
 }
+function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
+	const { value } = targetEl;
+	mirrorEl.setText(value);
+
+	if(!value) {
+		extensionEl.resetUnderlines();
+		return;
+	}
+
+	extensionEl.setDotStatus({ status: `loading` });
+	port.postMessage({
+		action: `inspectContent`,
+		options: { text: value }
+	});
+}
 export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	mirrorEl.reset();
-
-	mirrorEl.setText(activeEl.value);
+	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 	cloneElementStyles(activeEl, mirrorEl);
-	const observer = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 
+	const observer = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
 	activeEl.addEventListener(`input`, eventListener);
 	activeEl.spellcheck = false;

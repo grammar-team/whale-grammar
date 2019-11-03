@@ -31,7 +31,7 @@ class GrammarExtension extends HTMLElement {
 		this.shadowRoot.innerHTML = `
 			<link rel="stylesheet" href="${cssFile}" />
 			<div role="grammar-underline"></div>
-			<div role="grammar-dot">
+			<div role="grammar-dot" style="visibility: hidden;">
 				<a href="#" class="status" id="grammar-open">
 					<img src="${checkImg}" alt="check" />
 					<img src="${loadingImg}" alt="loading" />

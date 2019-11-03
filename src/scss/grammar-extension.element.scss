@@ -15,7 +15,8 @@ div[role="grammar-underline"] {
 }
 div[role="grammar-dot"] {
   position: absolute;
-  display: block;
+  display: block !important;
+  visibility: visible !important;
   width: 22px;
   height: 22px;
   background-color: transparent;

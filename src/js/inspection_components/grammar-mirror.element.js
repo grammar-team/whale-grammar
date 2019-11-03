@@ -15,7 +15,6 @@ class GrammarMirror extends HTMLElement {
 		this.setText = this.setText.bind(this);
 
 		this.measureTextPositions = this.measureTextPositions.bind(this);
-		this.measureWordsPositions = this.measureWordsPositions.bind(this);
 
 		this.render();
 	}
