@@ -41,7 +41,43 @@ class GrammarMirror extends HTMLElement {
 		this.mirrorEl.innerText = `${text}`;
 	}
 
+	_getCalculatedRange(nodeEl, { start, end }) {
+		let offsetStart = 0, offsetEnd = 0,
+			textNode = nodeEl.firstChild;
 
+		while(textNode) {
+			if(textNode.nodeType !== Node.TEXT_NODE) {
+				textNode = textNode.nextSibling;
+				continue;
+			}
+
+			offsetStart = offsetEnd;
+			offsetEnd += textNode.length;
+			if(offsetStart <= start && offsetEnd >= end) {
+				break;
+			}
+
+			textNode = textNode.nextSibling;
+			offsetEnd += 1;
+		}
+
+		const positionList = [];
+		if(!textNode) {
+			return positionList;
+		}
+
+		const range = document.createRange();
+		range.setStart(textNode, start - offsetStart);
+		range.setEnd(textNode, end - offsetStart);
+
+		const rectList = range.getClientRects();
+		for(let i = 0; i < rectList.length; i++) {
+			const { height, width, left, top } = rectList[i];
+			positionList.push({ height, width, left, top });
+		}
+
+		return positionList;
+	}
 	measureTextPositions(findList) {
 		if(findList !== undefined)
 			this.findList = findList;
@@ -54,23 +90,17 @@ class GrammarMirror extends HTMLElement {
 		}
 
 		let textIndex = 0;
-		const { innerText } = this.mirrorEl;
-		const range = document.createRange();
 		const positionList = [];
 		const missingIndexList = [];
 		this.findList.forEach((text, index) => {
-			const start = findStringInText(innerText, text, textIndex);
+			const start = findStringInText(this.mirrorEl.innerText, text, textIndex);
 			const end = start + text.length;
 			if(start === -1) {
 				missingIndexList.push(index);
 				return;
 			}
 
-			console.log({ start, text, innerText });
-
-			range.setStart(this.mirrorEl.firstChild, start);
-			range.setEnd(this.mirrorEl.firstChild, end);
-			const rectList = range.getClientRects();
+			const rectList = this._getCalculatedRange(this.mirrorEl, { start, end });
 			for(let i = 0; i < rectList.length; i++) {
 				const { height, width, left, top } = rectList[i];
 				positionList.push({ height, width, left, top, text, index: `${index}-${i}` });
