@@ -91,17 +91,24 @@ export function constructComponentController(sectionEl) {
 	const inputEl = sectionEl.querySelector(`textarea`);
 	const buttonEl = sectionEl.querySelector(`button.inspection`);
 	const resultEl = sectionEl.querySelector(`.result_text`);
+	const disableButtonEl = sectionEl.querySelector(`.inspection_bx`);
+	const segmentedTextEl =  sectionEl.querySelector(`.api_subject_bx`);
 
 	return {
+		sectionEl,
 		inputEl,
 		buttonEl,
 		resultEl,
+		disableButtonEl,
+		segmentedTextEl,
 
 		setText: function(e) {
 			if(typeof e !== typeof `string` || e.length < 1)
 				return;
 
 			this.inputEl.value = `${e}`;
+			disableButtonEl.style.display = `block`;
+			this.runInspection();
 		},
 		runInspection: function() {
 			this.buttonEl.click();

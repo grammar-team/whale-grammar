@@ -132,4 +132,20 @@ body.whale-grammar {
       }
     }
   }
+
+  section.text-segment {
+    display: block !important;
+
+    .section-content {
+      margin-top: 10px;
+      padding: 12px 18px;
+      background-color: #00c73c;
+
+      .description {
+        letter-spacing: 0;
+        font-size: 1.4rem;
+        color: #ffffff;
+      }
+    }
+  }
 }

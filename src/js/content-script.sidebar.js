@@ -5,24 +5,48 @@ import {
 } from "./sidebar_components/ui.component";
 
 const EVENT_LISTENER = {
+	segmentTextNode : null,
 	setOriginalText: function(options, controller) {
 		const { segmentedText } = options;
-		if(segmentedText.length == 1) {
+		if(segmentedText.length === 1) {
 			const [ text ] = segmentedText;
 			controller.setText(text);
 		}
 		else {
 			controller.setText(`개발필요`);
-			for(let i in segmentedText) {
-				console.log(segmentedText[i]);
-			}
+			this.constructSegmentController(controller, segmentedText);
+		}
+	},
+
+	renderTextSegmentSection: function(segmentedText) {
+		const segmentEl = document.createElement(`section`);
+		segmentEl.className = `text-segment`;
+
+		for(let i in segmentedText) {
+			const textNode = document.createElement(`div`);
+			textNode.className = `section-content`;
+			textNode.innerHTML = `
+				<div class="description">
+					${segmentedText[i]}
+				</div>
+			`;
+
+			segmentEl.appendChild(textNode);
 		}
 
-		/*const { text } = options;
+		return segmentEl;
+	},
 
-		if(typeof text === typeof `string`) {
-			controller.setText(text);
-		}*/
+	constructSegmentController: function(controller, segmentedText) {
+		if(this.segmentTextNode !== null) {
+			controller.segmentedTextEl.removeChild(this.segmentTextNode);
+			this.segmentTextNode = null;
+		}
+
+		const segmentEl = this.renderTextSegmentSection(segmentedText);
+		this.segmentTextNode = segmentEl;
+
+		controller.segmentedTextEl.insertBefore(segmentEl, controller.segmentedTextEl.firstElementChild.nextSibling);
 	}
 };
 
