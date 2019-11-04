@@ -28,6 +28,9 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 		if(isStyleChanged) {
 			cloneElementStyles(targetEl, mirrorEl);
 			extensionEl.setSizePosition(targetEl);
+
+			const { positionList } = mirrorEl.measureTextPositions();
+			extensionEl.addUnderlines(positionList);
 		}
 	});
 
@@ -45,10 +48,14 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 
 		clearTimeout(timeout);
 		if(!value) {
-			extensionEl.resetUnderlines();
+			extensionEl.reset();
 			return;
 		}
 
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		extensionEl.modifyUnderlines(positionList, missingIndexList);
+
+		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
 			port.postMessage({
 				action: `inspectContent`,
@@ -57,16 +64,83 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 		}, 1600);
 	}
 }
+function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
+	const { value } = targetEl;
+	mirrorEl.setText(value);
+
+	if(!value) {
+		extensionEl.resetUnderlines();
+		return;
+	}
+
+	extensionEl.setDotStatus({ status: `loading` });
+	port.postMessage({
+		action: `inspectContent`,
+		options: { text: value }
+	});
+}
 export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	mirrorEl.reset();
-
-	mirrorEl.setText(activeEl.value);
 	cloneElementStyles(activeEl, mirrorEl);
-	const observer = attachStyleObserver(activeEl, mirrorEl, extensionEl);
+	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 
+	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
 	activeEl.addEventListener(`input`, eventListener);
 	activeEl.spellcheck = false;
 
-	return { observer, eventListener };
+	return { styleObserver, eventListener };
+}
+
+function onEditableChanged(mirrorEl, extensionEl, port) {
+	let timeout;
+	return function(e) {
+		const { innerText, innerHTML } = e.target;
+		mirrorEl.setHTML(innerHTML);
+
+		clearTimeout(timeout);
+		if(!innerText) {
+			extensionEl.reset();
+			return;
+		}
+		//
+		// const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		// extensionEl.modifyUnderlines(positionList, missingIndexList);
+		//
+		// extensionEl.setDotStatus({ status: `loading` });
+		// timeout = window.setTimeout(function() {
+		// 	port.postMessage({
+		// 		action: `inspectContent`,
+		// 		options: { text: value }
+		// 	});
+		// }, 1600);
+	};
+}
+function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
+	const { innerText, innerHTML } = targetEl;
+	if(!innerText) {
+		extensionEl.resetUnderlines();
+		mirrorEl.setText(``);
+
+		return;
+	}
+
+	mirrorEl.setHTML(innerHTML);
+	// extensionEl.setDotStatus({ status: `loading` });
+	// port.postMessage({
+	// 	action: `inspectContent`,
+	// 	options: { text: value }
+	// });
+}
+export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port }) {
+	mirrorEl.reset();
+	cloneElementStyles(activeEl, mirrorEl);
+	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
+
+	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
+	const eventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	activeEl.addEventListener(`input`, eventListener);
+	activeEl.spellcheck = false;
+
+	return { styleObserver, eventListener };
 }

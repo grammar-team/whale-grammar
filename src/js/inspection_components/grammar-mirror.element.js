@@ -1,7 +1,11 @@
+import indexOfWords from "./kmp.algorithm";
+import getAllRangePositions, { findAllNewLines } from "./range.algorithm";
+
 class GrammarMirror extends HTMLElement {
 	constructor() {
 		super();
 
+		this.findList = [];
 		this.attachShadow({
 			mode: `open`,
 			delegatesFocus: true
@@ -11,8 +15,9 @@ class GrammarMirror extends HTMLElement {
 		this.reset = this.reset.bind(this);
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
+		this.setHTML = this.setHTML.bind(this);
 
-		this.measureWordsPositions = this.measureWordsPositions.bind(this);
+		this.measureTextPositions = this.measureTextPositions.bind(this);
 
 		this.render();
 	}
@@ -24,6 +29,7 @@ class GrammarMirror extends HTMLElement {
 	}
 
 	reset() {
+		this.findList = [];
 		this.mirrorEl.style.cssText = null;
 		this.mirrorEl.innerText = ``;
 	}
@@ -37,41 +43,24 @@ class GrammarMirror extends HTMLElement {
 
 		this.mirrorEl.innerText = `${text}`;
 	}
+	setHTML(html) {
+		this.mirrorEl.innerHTML = `${html}`;
+	}
 
-	measureWordsPositions(findList) {
-		if(findList.length < 1) {
-			return [];
+	measureTextPositions(findList) {
+		if(findList !== undefined)
+			this.findList = findList;
+
+		if(this.findList.length < 1) {
+			return { positionList: [], missingIndexList: [] };
 		}
 
-		const wordList = this.mirrorEl.innerText.split(` `);
-		const range = document.createRange();
-		let index = 0,
-			start = 0,
-			end = 0;
-
-		const positionList = [];
-		wordList.forEach(word => {
-			end = start + word.length;
-			if(index >= findList.length) {
-				return;
-			}
-
-			range.setStart(this.mirrorEl.firstChild, start);
-			range.setEnd(this.mirrorEl.firstChild, end);
-			if(word === findList[index]) {
-				const rects = range.getClientRects();
-				for(let i = 0; i < rects.length; i++) {
-					const { height, width, left, top } = rects[i];
-					positionList.push({ height, width, left, top });
-				}
-
-				index += 1;
-			}
-
-			start = end + 1;
-		});
-
-		return positionList;
+		const { innerText } = this.mirrorEl
+		const newLineList = findAllNewLines(innerText);
+		const { findPositionList, missingIndexList } = indexOfWords(innerText, this.findList);
+		const positionList = getAllRangePositions(this.mirrorEl, { newLineList, findPositionList });
+		
+		return { positionList, missingIndexList };
 	}
 }
 

@@ -1,18 +1,23 @@
 import "@webcomponents/custom-elements";
-import GrammarExtension from "./inspection_components/grammer-extension.element";
+import GrammarExtension from "./inspection_components/grammar-extension.element";
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { isSidebar } from "./sidebar_components/ui.component";
-import { renderMirrorElement, onTextAreaFocused } from "./inspection_components/grammar-mirror.functions";
+import {
+	renderMirrorElement, onTextAreaFocused, onEditableElementFocused
+} from "./inspection_components/grammar-mirror.functions";
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
+	startInspection: function(options, { port, extensionEl }) {
+		extensionEl.setDotStatus({ status: `loading` });
+	},
 	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
 		const { error_count, error_words } = options;
-		const wordPositionList = mirrorEl.measureWordsPositions(error_words);
-		console.log(`listen:inspectContentResult`, wordPositionList);
+		const { positionList } = mirrorEl.measureTextPositions(error_words);
 
-		extensionEl.addUnderlines(wordPositionList);
+		extensionEl.addUnderlines(positionList);
+		extensionEl.setDotStatus({ error_count, status: `default` });
 	}
 };
 const EVENT_LISTENER = {
@@ -21,16 +26,23 @@ const EVENT_LISTENER = {
 	lastActiveEl: null,
 
 	port: null,
-	textAreaObserver: null,
-	textAreaInputListener: null,
+	styleObserver: null,
+	inputListener: null,
 
+	_isEditableNode: function(nodeEl) {
+		if(
+			nodeEl.nodeName === `TEXTAREA` ||
+			nodeEl.contentEditable === `${true}`
+		) {
+			return true;
+		}
+
+		return false;
+	},
 	_isNeedReset: function(nodeEl) {
 		if(
 			this.lastActiveEl &&
-			(
-				nodeEl.nodeName === `TEXTAREA` ||
-				nodeEl.contentEditable === `${true}`
-			) &&
+			this._isEditableNode(nodeEl) &&
 			nodeEl !== this.lastActiveEl
 		)
 			return true;
@@ -41,20 +53,24 @@ const EVENT_LISTENER = {
 		if(this.lastActiveEl === null) {
 			this._injectExtensionElement(activeElement);
 		} else if(this._isNeedReset(activeElement)) {
-			if(this.textAreaObserver) { this.textAreaObserver.disconnect(); }
+			if(this.styleObserver) { this.styleObserver.disconnect(); }
 
 			if(this.extensionEl) this.extensionEl.remove();
 			this._injectExtensionElement(activeElement);
 
-			this.lastActiveEl.removeEventListener(`input`, this.textAreaInputListener);
+			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 		}
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
 		this.extensionEl.setSizePosition(activeElement);
 
-		const parentEl = findProperParent(activeElement.parentElement);
-		parentEl.appendChild(this.extensionEl);
+		if(activeElement !== document.body) {
+			const parentEl = findProperParent(activeElement.parentElement);
+			parentEl.appendChild(this.extensionEl);
+		} else {
+			activeElement.parentElement.appendChild(this.extensionEl);
+		}
 	},
 	initializeListener: function() {
 		this.mirrorEl = renderMirrorElement();
@@ -77,17 +93,29 @@ const EVENT_LISTENER = {
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
+		if(
+			this._isEditableNode(activeElement) === false ||
+			activeElement.offsetHeight < 50
+		) {
+			return;
+		}
 
 		this._resetThings(activeElement);
+		const options = {
+			activeEl: activeElement,
+			mirrorEl: this.mirrorEl,
+			extensionEl: this.extensionEl,
+			port: this.port
+		};
+
 		if(activeElement.nodeName === `TEXTAREA`) {
-			const { observer, eventListener } = onTextAreaFocused({
-				activeEl: activeElement,
-				mirrorEl: this.mirrorEl,
-				extensionEl: this.extensionEl,
-				port: this.port
-			});
-			this.textAreaObserver = observer;
-			this.textAreaInputListener = eventListener;
+			const { styleObserver, eventListener } = onTextAreaFocused(options);
+			this.styleObserver = styleObserver;
+			this.inputListener = eventListener;
+		} else if(activeElement.nodeName !== `INPUT`) {
+			const { styleObserver, eventListener } = onEditableElementFocused(options);
+			this.styleObserver = styleObserver;
+			this.inputListener = eventListener;
 		}
 
 		this.lastActiveEl = activeElement;

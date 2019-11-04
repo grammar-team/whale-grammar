@@ -35,7 +35,7 @@
       "matches": ["http://*/*", "https://*/*"],
       "css": ["css/content-script.inspection.css"],
       "js": ["js/content-script.inspection.js"],
-      "all_frames": false,
+      "all_frames": true,
       "run_at": "document_start"
     }
   ],
@@ -49,6 +49,7 @@
     "image/naver_logo.png",
     "image/check.svg",
     "image/power.svg",
+    "image/loading.svg",
     "css/grammar-extension.element.css"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'"

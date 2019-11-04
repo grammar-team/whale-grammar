@@ -6,6 +6,7 @@ const PORT_LIST = [];
 let EVENT_QUEUE = null;
 
 const INSPECTION_LISTENER = {
+<<<<<<< HEAD
     _filterErrorWords: (html) => {
         const nodeEl = document.createElement(`div`);
         nodeEl.innerHTML = `${html}`;
@@ -35,6 +36,42 @@ const INSPECTION_LISTENER = {
             });
         });
     }
+=======
+	_filterErrorWords: (html) => {
+		const nodeEl = document.createElement(`div`);
+		nodeEl.innerHTML = `${html}`;
+
+		const words = [];
+		const wordEls = nodeEl.querySelectorAll(`span.result_underline`);
+		wordEls.forEach(wordEl => {
+			const { innerText } = wordEl;
+			if(innerText)
+				words.push(`${innerText}`);
+		});
+
+		return words;
+	},
+	inspectContent: function(port, options) {
+		const { text } = options;
+		const encodedText = window.encodeURIComponent(text);
+		const host = `https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy`;
+		const where = `whale-grammar`;
+		const url = `${host}?q=${encodedText}&where=${where}&color_blindness=0`;
+
+		port.postMessage({
+			action: `startInspection`,
+			options: {  }
+		});
+		fetchJsonp(url).then(data => {
+			const { errata_count, origin_html } = data;
+			const error_words = this._filterErrorWords(origin_html);
+			port.postMessage({
+				action: `inspectContentResult`,
+				options: { error_count: errata_count, error_words }
+			});
+		});
+	}
+>>>>>>> cb411a7c816e206ae407cdbd5fcffc61956f341b
 };
 
 function onMessagePushQueue(message) {
