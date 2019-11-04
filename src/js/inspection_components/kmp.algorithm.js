@@ -61,6 +61,7 @@ export default function(text, wordList) {
 
 		const end = start + word.length;
 		findPositionList.push({ start, end, index });
+		textIndex = end;
 	});
 
 	return {

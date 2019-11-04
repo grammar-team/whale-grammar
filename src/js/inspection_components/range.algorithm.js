@@ -1,4 +1,3 @@
-let FIND_INDEX = 0;
 const range = document.createRange();
 function getRangeSelection(textNode, { start, end }) {
 	range.setStart(textNode, start);
@@ -42,16 +41,14 @@ const TRAVERS = {
 function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList) {
 	let { start, end } = findPositionList[TRAVERS.findIndex];
 	if(nodeEl === null || nodeEl === undefined) {
-		console.log(`NULL`);
 		return;
 	}
 
 	if(TRAVERS.offsetHead > start) {
 		if(TRAVERS.increaseIndex(findPositionList)) {
-			start = findPositionList[FIND_INDEX].start;
-			end = findPositionList[FIND_INDEX].end;
+			start = findPositionList[TRAVERS.findIndex].start;
+			end = findPositionList[TRAVERS.findIndex].end;
 		} else {
-			console.log(`OVERFLOW`);
 			return;
 		}
 	}
@@ -60,27 +57,33 @@ function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList
 		const { length } = nodeEl;
 		const offsetStart = TRAVERS.offsetHead;
 		const offsetEnd = offsetStart + length;
-		console.log(`check`, { start, end, offsetStart, offsetEnd });
-		console.log({
-			'start <= offsetStart': start <= offsetStart,
-			'offsetEnd <= end': offsetEnd <= end
-		});
 
-		if(!(offsetEnd < start || offsetStart > end)) {
-			const s = start - offsetStart;
-			const e = Math.min(end, offsetEnd) - offsetStart;
+		while(true) {
+			if(!(offsetEnd < start || offsetStart > end)) {
+				const s = start - offsetStart;
+				const e = Math.min(end, offsetEnd) - offsetStart;
 
-			console.log(`push!`, { s, e, start, end, offsetStart, offsetEnd });
-			const rectList = getRangeSelection(nodeEl, { start: s, end: e });
-			for(let i = 0; i < rectList.length; i++) {
-				const { height, width, left, top } = rectList[i];
-				positionList.push({ height, width, left, top, index: `${FIND_INDEX}-${i}` });
+				const rectList = getRangeSelection(nodeEl, { start: s, end: e });
+				for(let i = 0; i < rectList.length; i++) {
+					const { height, width, left, top } = rectList[i];
+					positionList.push({ height, width, left, top, index: `${TRAVERS.findIndex}-${i}` });
+				}
+
+				if(TRAVERS.increaseIndex(findPositionList)) {
+					start = findPositionList[TRAVERS.findIndex].start;
+					end = findPositionList[TRAVERS.findIndex].end;
+
+					continue;
+				} else {
+					return;
+				}
 			}
+
+			break;
 		}
 
 		TRAVERS.increaseHead(length);
 		if(newLineList.includes(offsetEnd)) {
-			console.log(`newLine`, offsetEnd, newLineList);
 			TRAVERS.increaseHead(1);
 		}
 
@@ -94,7 +97,6 @@ function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList
 export default function(mirrorEl, { newLineList, findPositionList }) {
 	TRAVERS.reset();
 
-	console.log(`run:`, findPositionList);
 	const positionList = [];
 	nodeTreeTravers(mirrorEl, { newLineList, findPositionList }, positionList);
 
