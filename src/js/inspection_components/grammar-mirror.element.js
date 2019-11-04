@@ -1,4 +1,5 @@
-import findStringInText from "./kmp.algorithm";
+import indexOfWords from "./kmp.algorithm";
+import getAllRangePositions, { findAllNewLines } from "./range.algorithm";
 
 class GrammarMirror extends HTMLElement {
 	constructor() {
@@ -28,6 +29,7 @@ class GrammarMirror extends HTMLElement {
 	}
 
 	reset() {
+		this.findList = [];
 		this.mirrorEl.style.cssText = null;
 		this.mirrorEl.innerText = ``;
 	}
@@ -43,6 +45,23 @@ class GrammarMirror extends HTMLElement {
 	}
 	setHTML(html) {
 		this.mirrorEl.innerHTML = `${html}`;
+	}
+
+	measureTextPositions(findList) {
+		if(findList !== undefined)
+			this.findList = findList;
+
+		if(this.findList.length < 1) {
+			return { positionList: [], missingIndexList: [] };
+		}
+
+		const { innerText } = this.mirrorEl
+		const newLineList = findAllNewLines(innerText);
+		const { findPositionList, missingIndexList } = indexOfWords(innerText, this.findList);
+		const positionList = getAllRangePositions(this.mirrorEl, { newLineList, findPositionList });
+
+		console.log(`finish:measureTextPositions`, positionList);
+		return { positionList, missingIndexList };
 	}
 
 	_getCalculatedRange(nodeEl, { start, end }) {
@@ -82,7 +101,7 @@ class GrammarMirror extends HTMLElement {
 
 		return positionList;
 	}
-	measureTextPositions(findList) {
+	_measureTextPositions(findList) {
 		if(findList !== undefined)
 			this.findList = findList;
 

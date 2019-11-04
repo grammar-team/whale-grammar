@@ -21,7 +21,7 @@ function _buildPatternTable(word) {
 	return patternTable;
 }
 
-export default function(text, word, textIndex) {
+export function indexOfWord(text, word, textIndex) {
 	if(word.length === 0) {
 		return 0;
 	}
@@ -46,4 +46,25 @@ export default function(text, word, textIndex) {
 	}
 
 	return -1;
+}
+export default function(text, wordList) {
+	const findPositionList = [];
+	const missingIndexList = [];
+
+	let textIndex = 0;
+	wordList.forEach((word, index) => {
+		const start = indexOfWord(text, word, textIndex);
+		if(start === -1) {
+			missingIndexList.push(index);
+			return;
+		}
+
+		const end = start + word.length;
+		findPositionList.push({ start, end, index });
+	});
+
+	return {
+		findPositionList,
+		missingIndexList
+	};
 }
