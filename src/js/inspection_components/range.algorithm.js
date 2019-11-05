@@ -1,11 +1,3 @@
-const range = document.createRange();
-function getRangeSelection(textNode, { start, end }) {
-	range.setStart(textNode, start);
-	range.setEnd(textNode, end);
-
-	return range.getClientRects();
-}
-
 export function findAllNewLines(text) {
 	let fromIndex = 0;
 	const nList = [];
@@ -38,7 +30,15 @@ const TRAVERS = {
 		this.offsetHead += textLength;
 	}
 };
-function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList) {
+
+const range = document.createRange();
+function getRangeSelection(textNode, { start, end }) {
+	range.setStart(textNode, start);
+	range.setEnd(textNode, end);
+
+	return range.getClientRects();
+}
+function nodeTreeTravers(parentEl, nodeEl, { newLineList, findPositionList }, positionList) {
 	if(findPositionList[TRAVERS.findIndex] === undefined) {
 		return;
 	}
@@ -63,14 +63,14 @@ function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList
 		const offsetEnd = offsetStart + length;
 
 		while(true) {
-			if(!(offsetEnd < start || offsetStart > end)) {
+			if(!(offsetEnd <= start || offsetStart >= end)) {
 				const s = start - offsetStart;
 				const e = Math.min(end, offsetEnd) - offsetStart;
 
 				const rectList = getRangeSelection(nodeEl, { start: s, end: e });
 				for(let i = 0; i < rectList.length; i++) {
 					const { height, width, left, top } = rectList[i];
-					positionList.push({ height, width, left, top, index: `${TRAVERS.findIndex}-${i}` });
+					positionList.push({ height, width, top, left, index: `${TRAVERS.findIndex}-${i}` });
 				}
 
 				if(TRAVERS.increaseIndex(findPositionList)) {
@@ -90,17 +90,17 @@ function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList
 		}
 
 	} else if(nodeEl.nodeType === Node.ELEMENT_NODE) {
-		nodeTreeTravers(nodeEl.firstChild, { newLineList, findPositionList }, positionList);
+		nodeTreeTravers(parentEl, nodeEl.firstChild, { newLineList, findPositionList }, positionList);
 	}
 
-	nodeTreeTravers(nodeEl.nextSibling, { newLineList, findPositionList }, positionList);
+	nodeTreeTravers(parentEl, nodeEl.nextSibling, { newLineList, findPositionList }, positionList);
 }
 
 export default function(mirrorEl, { newLineList, findPositionList }) {
 	TRAVERS.reset();
 
 	const positionList = [];
-	nodeTreeTravers(mirrorEl, { newLineList, findPositionList }, positionList);
+	nodeTreeTravers(mirrorEl, mirrorEl, { newLineList, findPositionList }, positionList);
 
 	return positionList;
 }

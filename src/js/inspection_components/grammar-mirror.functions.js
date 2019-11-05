@@ -150,6 +150,8 @@ function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
 }
 export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port }) {
 	mirrorEl.reset();
+	mirrorEl.setScrollPosition(activeEl);
+
 	cloneElementStyles(activeEl, mirrorEl);
 	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
 
