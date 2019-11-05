@@ -40,6 +40,16 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 
 	return observer;
 }
+function onScrolled(mirrorEl, extensionEl) {
+	return function(e) {
+		mirrorEl.setScrollPosition(e.target);
+
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+	}
+}
+
 function onTextAreaChanged(mirrorEl, extensionEl, port) {
 	let timeout;
 	return function(e) {
@@ -63,15 +73,6 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 				options: { text: value }
 			});
 		}, 1600);
-	}
-}
-function onTextAreaScrolled(mirrorEl, extensionEl) {
-	return function(e) {
-		mirrorEl.setScrollPosition(e.target);
-
-		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
-		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
 	}
 }
 function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
@@ -98,7 +99,7 @@ export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 	const inputEventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
-	const scrollEventListener = onTextAreaScrolled(mirrorEl, extensionEl);
+	const scrollEventListener = onScrolled(mirrorEl, extensionEl);
 	activeEl.addEventListener(`input`, inputEventListener);
 	activeEl.addEventListener(`scroll`, scrollEventListener);
 	activeEl.spellcheck = false;
@@ -117,17 +118,18 @@ function onEditableChanged(mirrorEl, extensionEl, port) {
 			extensionEl.reset();
 			return;
 		}
-		//
-		// const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		// extensionEl.modifyUnderlines(positionList, missingIndexList);
-		//
-		// extensionEl.setDotStatus({ status: `loading` });
-		// timeout = window.setTimeout(function() {
-		// 	port.postMessage({
-		// 		action: `inspectContent`,
-		// 		options: { text: value }
-		// 	});
-		// }, 1600);
+
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+
+		extensionEl.setDotStatus({ status: `loading` });
+		timeout = window.setTimeout(function() {
+			port.postMessage({
+				action: `inspectContent`,
+				options: { text: innerText }
+			});
+		}, 1600);
 	};
 }
 function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
@@ -140,11 +142,11 @@ function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
 	}
 
 	mirrorEl.setHTML(innerHTML);
-	// extensionEl.setDotStatus({ status: `loading` });
-	// port.postMessage({
-	// 	action: `inspectContent`,
-	// 	options: { text: value }
-	// });
+	extensionEl.setDotStatus({ status: `loading` });
+	port.postMessage({
+		action: `inspectContent`,
+		options: { text: innerText }
+	});
 }
 export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port }) {
 	mirrorEl.reset();
@@ -153,8 +155,10 @@ export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
 	const inputEventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	const scrollEventListener = onScrolled(mirrorEl, extensionEl);
 	activeEl.addEventListener(`input`, inputEventListener);
+	activeEl.addEventListener(`scroll`, scrollEventListener);
 	activeEl.spellcheck = false;
 
-	return { styleObserver, inputEventListener };
+	return { styleObserver, inputEventListener, scrollEventListener };
 }

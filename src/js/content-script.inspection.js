@@ -63,6 +63,8 @@ const EVENT_LISTENER = {
 			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
 		}
+
+		this.lastActiveEl = activeElement;
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
@@ -122,8 +124,6 @@ const EVENT_LISTENER = {
 			this.inputListener = inputEventListener;
 			this.scrollListener = scrollEventListener;
 		}
-
-		this.lastActiveEl = activeElement;
 	}
 };
 

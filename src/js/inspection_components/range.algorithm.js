@@ -78,8 +78,6 @@ function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList
 					end = findPositionList[TRAVERS.findIndex].end;
 
 					continue;
-				} else {
-					return;
 				}
 			}
 
