@@ -39,6 +39,10 @@ const TRAVERS = {
 	}
 };
 function nodeTreeTravers(nodeEl, { newLineList, findPositionList }, positionList) {
+	if(findPositionList[TRAVERS.findIndex] === undefined) {
+		return;
+	}
+
 	let { start, end } = findPositionList[TRAVERS.findIndex];
 	if(nodeEl === null || nodeEl === undefined) {
 		return;
