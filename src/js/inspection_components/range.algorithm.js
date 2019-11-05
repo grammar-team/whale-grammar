@@ -48,12 +48,10 @@ function nodeTreeTravers(parentEl, nodeEl, { newLineList, findPositionList }, po
 		return;
 	}
 
-	if(TRAVERS.offsetHead > start) {
+	if(TRAVERS.offsetHead > end) {
 		if(TRAVERS.increaseIndex(findPositionList)) {
 			start = findPositionList[TRAVERS.findIndex].start;
 			end = findPositionList[TRAVERS.findIndex].end;
-		} else {
-			return;
 		}
 	}
 
@@ -63,21 +61,14 @@ function nodeTreeTravers(parentEl, nodeEl, { newLineList, findPositionList }, po
 		const offsetEnd = offsetStart + length;
 
 		while(true) {
-			if(!(offsetEnd <= start || offsetStart >= end)) {
-				const s = start - offsetStart;
+			if(offsetStart < end && start < offsetEnd) {
+				const s = Math.max(start - offsetStart, 0);
 				const e = Math.min(end, offsetEnd) - offsetStart;
 
 				const rectList = getRangeSelection(nodeEl, { start: s, end: e });
 				for(let i = 0; i < rectList.length; i++) {
 					const { height, width, left, top } = rectList[i];
-					positionList.push({ height, width, top, left, index: `${TRAVERS.findIndex}-${i}` });
-				}
-
-				if(TRAVERS.increaseIndex(findPositionList)) {
-					start = findPositionList[TRAVERS.findIndex].start;
-					end = findPositionList[TRAVERS.findIndex].end;
-
-					continue;
+					positionList.push({ height, width, top, left, index: TRAVERS.findIndex });
 				}
 			}
 

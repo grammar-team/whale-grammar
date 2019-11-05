@@ -29,8 +29,9 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 			cloneElementStyles(targetEl, mirrorEl);
 			extensionEl.setSizePosition(targetEl);
 
+			const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 			const { positionList } = mirrorEl.measureTextPositions();
-			extensionEl.addUnderlines(positionList);
+			extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		}
 	});
 
@@ -46,7 +47,8 @@ function onScrolled(mirrorEl, extensionEl) {
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 	}
 }
 
@@ -64,7 +66,8 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
@@ -121,7 +124,8 @@ function onEditableChanged(mirrorEl, extensionEl, port) {
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {

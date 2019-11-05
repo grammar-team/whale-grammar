@@ -83,7 +83,6 @@ class GrammarExtension extends HTMLElement {
 		this.dataset.generated = `whale-grammar`;
 		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = targetEl;
 		const { marginTop, marginLeft } = getElementMargin(targetEl);
-		console.log({ marginTop, marginLeft });
 
 		this.style.top = `${offsetTop + parseInt(marginTop, 10)}px`;
 		this.style.left = `${offsetLeft + parseInt(marginLeft, 10)}px`;
@@ -96,19 +95,27 @@ class GrammarExtension extends HTMLElement {
 	}
 	addUnderlines(underlineList, { scrollTop, scrollLeft }) {
 		this.resetUnderlines();
+
+		let lastIndex = 0, subIndex = 0;
 		underlineList.forEach(rect => {
 			const { height, width, left, top, index } = rect;
 			const nodeEl = document.createElement(`span`);
+			if(index !== lastIndex) {
+				lastIndex = index;
+				subIndex = 0;
+			}
 
-			nodeEl.dataset.index = `${index}`;
+			nodeEl.dataset.index = `${index}-${subIndex}`;
 			nodeEl.style.width = `${width}px`;
 			nodeEl.style.top = `${top - scrollTop + (height - 1)}px`;
 			nodeEl.style.left = `${left - scrollLeft}px`;
 
 			this.underlineWrapEl.appendChild(nodeEl);
+			subIndex += 1;
 		});
 	}
 	modifyUnderlines(underlineList, missingList, { scrollTop, scrollLeft }) {
+		let lastIndex = 0, subIndex = 0;
 		underlineList.forEach(rect => {
 			const { height, width, left, top, index } = rect;
 			let nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
