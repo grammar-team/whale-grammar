@@ -94,7 +94,7 @@ class GrammarExtension extends HTMLElement {
 		this.dotEl.style.top = `${offsetHeight - 36}px`;
 		this.dotEl.style.left = `${offsetWidth - 36}px`;
 	}
-	addUnderlines(underlineList) {
+	addUnderlines(underlineList, { scrollTop, scrollLeft }) {
 		this.resetUnderlines();
 		underlineList.forEach(rect => {
 			const { height, width, left, top, index } = rect;
@@ -102,13 +102,13 @@ class GrammarExtension extends HTMLElement {
 
 			nodeEl.dataset.index = `${index}`;
 			nodeEl.style.width = `${width}px`;
-			nodeEl.style.top = `${top + (height - 1)}px`;
-			nodeEl.style.left = `${left}px`;
+			nodeEl.style.top = `${top - scrollTop + (height - 1)}px`;
+			nodeEl.style.left = `${left - scrollLeft}px`;
 
 			this.underlineWrapEl.appendChild(nodeEl);
 		});
 	}
-	modifyUnderlines(underlineList, missingList) {
+	modifyUnderlines(underlineList, missingList, { scrollTop, scrollLeft }) {
 		underlineList.forEach(rect => {
 			const { height, width, left, top, index } = rect;
 			let nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
@@ -120,8 +120,8 @@ class GrammarExtension extends HTMLElement {
 			}
 
 			nodeEl.style.width = `${width}px`;
-			nodeEl.style.top = `${top + (height - 1)}px`;
-			nodeEl.style.left = `${left}px`;
+			nodeEl.style.top = `${top - scrollTop + (height - 1)}px`;
+			nodeEl.style.left = `${left - scrollLeft}px`;
 		});
 		missingList.forEach(index => {
 			this.removeUnderline(index);

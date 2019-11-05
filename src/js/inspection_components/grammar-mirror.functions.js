@@ -52,8 +52,9 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 			return;
 		}
 
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList);
+		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
@@ -62,6 +63,15 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 				options: { text: value }
 			});
 		}, 1600);
+	}
+}
+function onTextAreaScrolled(mirrorEl, extensionEl) {
+	return function(e) {
+		mirrorEl.setScrollPosition(e.target);
+
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
 	}
 }
 function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
@@ -81,15 +91,19 @@ function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
 }
 export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	mirrorEl.reset();
+	mirrorEl.setScrollPosition(activeEl);
+
 	cloneElementStyles(activeEl, mirrorEl);
 	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
-	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
-	activeEl.addEventListener(`input`, eventListener);
+	const inputEventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
+	const scrollEventListener = onTextAreaScrolled(mirrorEl, extensionEl);
+	activeEl.addEventListener(`input`, inputEventListener);
+	activeEl.addEventListener(`scroll`, scrollEventListener);
 	activeEl.spellcheck = false;
 
-	return { styleObserver, eventListener };
+	return { styleObserver, inputEventListener, scrollEventListener };
 }
 
 function onEditableChanged(mirrorEl, extensionEl, port) {
@@ -138,9 +152,9 @@ export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port
 	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
-	const eventListener = onEditableChanged(mirrorEl, extensionEl, port);
-	activeEl.addEventListener(`input`, eventListener);
+	const inputEventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	activeEl.addEventListener(`input`, inputEventListener);
 	activeEl.spellcheck = false;
 
-	return { styleObserver, eventListener };
+	return { styleObserver, inputEventListener };
 }
