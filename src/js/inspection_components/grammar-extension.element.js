@@ -14,7 +14,6 @@ class GrammarExtension extends HTMLElement {
 		this.bindClickEvents = this.bindClickEvents.bind(this);
 		this.setSizePosition = this.setSizePosition.bind(this);
 		this.addUnderlines = this.addUnderlines.bind(this);
-		this.modifyUnderlines = this.modifyUnderlines.bind(this);
 		this.resetUnderlines = this.resetUnderlines.bind(this);
 		this.removeUnderline = this.removeUnderline.bind(this);
 
@@ -112,26 +111,6 @@ class GrammarExtension extends HTMLElement {
 
 			this.underlineWrapEl.appendChild(nodeEl);
 			subIndex += 1;
-		});
-	}
-	modifyUnderlines(underlineList, missingList, { scrollTop, scrollLeft }) {
-		let lastIndex = 0, subIndex = 0;
-		underlineList.forEach(rect => {
-			const { height, width, left, top, index } = rect;
-			let nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
-			if(!nodeEl) {
-				nodeEl = document.createElement(`span`);
-				nodeEl.dataset.index = `${index}`;
-
-				this.underlineWrapEl.appendChild(nodeEl);
-			}
-
-			nodeEl.style.width = `${width}px`;
-			nodeEl.style.top = `${top - scrollTop + (height - 1)}px`;
-			nodeEl.style.left = `${left - scrollLeft}px`;
-		});
-		missingList.forEach(index => {
-			this.removeUnderline(index);
 		});
 	}
 	removeUnderline(index) {
