@@ -16,6 +16,8 @@ class GrammarMirror extends HTMLElement {
 		this.setStyle = this.setStyle.bind(this);
 		this.setText = this.setText.bind(this);
 		this.setHTML = this.setHTML.bind(this);
+		this.setScrollPosition = this.setScrollPosition.bind(this);
+		this.getScrollPosition = this.getScrollPosition.bind(this);
 
 		this.measureTextPositions = this.measureTextPositions.bind(this);
 
@@ -24,6 +26,7 @@ class GrammarMirror extends HTMLElement {
 	render() {
 		this.mirrorEl = document.createElement(`div`);
 		this.mirrorEl.role = `whale-grammar-mirror`;
+		this.mirrorEl.dataset.scrollTop =`0`;
 
 		this.shadowRoot.appendChild(this.mirrorEl);
 	}
@@ -32,6 +35,7 @@ class GrammarMirror extends HTMLElement {
 		this.findList = [];
 		this.mirrorEl.style.cssText = null;
 		this.mirrorEl.innerText = ``;
+		this.mirrorEl.dataset.scrollTop = `0`;
 	}
 	setStyle(key, value) {
 		this.mirrorEl.style.setProperty(key, value);
@@ -46,6 +50,16 @@ class GrammarMirror extends HTMLElement {
 	setHTML(html) {
 		this.mirrorEl.innerHTML = `${html}`;
 	}
+	setScrollPosition({scrollTop, scrollLeft}) {
+		this.mirrorEl.dataset.scrollTop = `${parseInt(scrollTop, 10)}`;
+		this.mirrorEl.dataset.scrollLeft = `${parseInt(scrollLeft, 10)}`;
+	}
+	getScrollPosition() {
+		return {
+			scrollTop: parseInt(this.mirrorEl.dataset.scrollTop, 10),
+			scrollLeft: parseInt(this.mirrorEl.dataset.scrollLeft, 10)
+		};
+	}
 
 	measureTextPositions(findList) {
 		if(findList !== undefined)
@@ -55,11 +69,11 @@ class GrammarMirror extends HTMLElement {
 			return { positionList: [], missingIndexList: [] };
 		}
 
-		const { innerText } = this.mirrorEl
+		const { innerText } = this.mirrorEl;
 		const newLineList = findAllNewLines(innerText);
 		const { findPositionList, missingIndexList } = indexOfWords(innerText, this.findList);
 		const positionList = getAllRangePositions(this.mirrorEl, { newLineList, findPositionList });
-		
+
 		return { positionList, missingIndexList };
 	}
 }

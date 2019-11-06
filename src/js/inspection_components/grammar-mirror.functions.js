@@ -29,8 +29,9 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 			cloneElementStyles(targetEl, mirrorEl);
 			extensionEl.setSizePosition(targetEl);
 
+			const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 			const { positionList } = mirrorEl.measureTextPositions();
-			extensionEl.addUnderlines(positionList);
+			extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		}
 	});
 
@@ -40,6 +41,17 @@ function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 
 	return observer;
 }
+function onScrolled(mirrorEl, extensionEl) {
+	return function(e) {
+		mirrorEl.setScrollPosition(e.target);
+
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
+	}
+}
+
 function onTextAreaChanged(mirrorEl, extensionEl, port) {
 	let timeout;
 	return function(e) {
@@ -52,8 +64,10 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 			return;
 		}
 
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		extensionEl.modifyUnderlines(positionList, missingIndexList);
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
@@ -81,15 +95,19 @@ function firstTextInspection(targetEl, mirrorEl, extensionEl, port) {
 }
 export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	mirrorEl.reset();
+	mirrorEl.setScrollPosition(activeEl);
+
 	cloneElementStyles(activeEl, mirrorEl);
 	firstTextInspection(activeEl, mirrorEl, extensionEl, port);
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
-	const eventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
-	activeEl.addEventListener(`input`, eventListener);
+	const inputEventListener = onTextAreaChanged(mirrorEl, extensionEl, port);
+	const scrollEventListener = onScrolled(mirrorEl, extensionEl);
+	activeEl.addEventListener(`input`, inputEventListener);
+	activeEl.addEventListener(`scroll`, scrollEventListener);
 	activeEl.spellcheck = false;
 
-	return { styleObserver, eventListener };
+	return { styleObserver, inputEventListener, scrollEventListener };
 }
 
 function onEditableChanged(mirrorEl, extensionEl, port) {
@@ -103,17 +121,19 @@ function onEditableChanged(mirrorEl, extensionEl, port) {
 			extensionEl.reset();
 			return;
 		}
-		//
-		// const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		// extensionEl.modifyUnderlines(positionList, missingIndexList);
-		//
-		// extensionEl.setDotStatus({ status: `loading` });
-		// timeout = window.setTimeout(function() {
-		// 	port.postMessage({
-		// 		action: `inspectContent`,
-		// 		options: { text: value }
-		// 	});
-		// }, 1600);
+
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
+		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
+
+		extensionEl.setDotStatus({ status: `loading` });
+		timeout = window.setTimeout(function() {
+			port.postMessage({
+				action: `inspectContent`,
+				options: { text: innerText }
+			});
+		}, 1600);
 	};
 }
 function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
@@ -126,21 +146,25 @@ function firstElementInspection(targetEl, mirrorEl, extensionEl, port) {
 	}
 
 	mirrorEl.setHTML(innerHTML);
-	// extensionEl.setDotStatus({ status: `loading` });
-	// port.postMessage({
-	// 	action: `inspectContent`,
-	// 	options: { text: value }
-	// });
+	extensionEl.setDotStatus({ status: `loading` });
+	port.postMessage({
+		action: `inspectContent`,
+		options: { text: innerText }
+	});
 }
 export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port }) {
 	mirrorEl.reset();
+	mirrorEl.setScrollPosition(activeEl);
+
 	cloneElementStyles(activeEl, mirrorEl);
 	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
-	const eventListener = onEditableChanged(mirrorEl, extensionEl, port);
-	activeEl.addEventListener(`input`, eventListener);
+	const inputEventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	const scrollEventListener = onScrolled(mirrorEl, extensionEl);
+	activeEl.addEventListener(`input`, inputEventListener);
+	activeEl.addEventListener(`scroll`, scrollEventListener);
 	activeEl.spellcheck = false;
 
-	return { styleObserver, eventListener };
+	return { styleObserver, inputEventListener, scrollEventListener };
 }

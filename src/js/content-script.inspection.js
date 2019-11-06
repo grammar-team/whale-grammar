@@ -16,7 +16,8 @@ const PORT_LISTENER = {
 		const { error_count, error_words } = options;
 		const { positionList } = mirrorEl.measureTextPositions(error_words);
 
-		extensionEl.addUnderlines(positionList);
+		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		extensionEl.setDotStatus({ error_count, status: `default` });
 	}
 };
@@ -28,6 +29,7 @@ const EVENT_LISTENER = {
 	port: null,
 	styleObserver: null,
 	inputListener: null,
+	scrollListener: null,
 
 	_isEditableNode: function(nodeEl) {
 		if(
@@ -59,7 +61,10 @@ const EVENT_LISTENER = {
 			this._injectExtensionElement(activeElement);
 
 			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
+			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
 		}
+
+		this.lastActiveEl = activeElement;
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
@@ -109,16 +114,16 @@ const EVENT_LISTENER = {
 		};
 
 		if(activeElement.nodeName === `TEXTAREA`) {
-			const { styleObserver, eventListener } = onTextAreaFocused(options);
+			const { styleObserver, inputEventListener, scrollEventListener } = onTextAreaFocused(options);
 			this.styleObserver = styleObserver;
-			this.inputListener = eventListener;
+			this.inputListener = inputEventListener;
+			this.scrollListener = scrollEventListener;
 		} else if(activeElement.nodeName !== `INPUT`) {
-			const { styleObserver, eventListener } = onEditableElementFocused(options);
+			const { styleObserver, inputEventListener, scrollEventListener } = onEditableElementFocused(options);
 			this.styleObserver = styleObserver;
-			this.inputListener = eventListener;
+			this.inputListener = inputEventListener;
+			this.scrollListener = scrollEventListener;
 		}
-
-		this.lastActiveEl = activeElement;
 	}
 };
 
