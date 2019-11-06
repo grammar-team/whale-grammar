@@ -93,6 +93,7 @@ export function constructComponentController(sectionEl) {
 	const resultEl = sectionEl.querySelector(`.result_text`);
 	const disableButtonEl = sectionEl.querySelector(`.inspection_bx`);
 	const segmentedTextEl =  sectionEl.querySelector(`.api_subject_bx`);
+	const textNumEl = sectionEl.querySelector(`.txt_limit strong`);
 
 	return {
 		sectionEl,
@@ -101,13 +102,17 @@ export function constructComponentController(sectionEl) {
 		resultEl,
 		disableButtonEl,
 		segmentedTextEl,
+		textNumEl,
 
 		setText: function(e) {
 			if(typeof e !== typeof `string` || e.length < 1)
 				return;
 
 			this.inputEl.value = `${e}`;
+			this.inputEl.dispatchEvent(new Event(`input`));
+
 			disableButtonEl.style.display = `block`;
+			this.textNumEl.innerText = e.length;
 			this.runInspection();
 		},
 		runInspection: function() {
