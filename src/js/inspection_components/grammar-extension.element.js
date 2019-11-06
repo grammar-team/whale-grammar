@@ -14,7 +14,6 @@ class GrammarExtension extends HTMLElement {
 		this.bindClickEvents = this.bindClickEvents.bind(this);
 		this.setSizePosition = this.setSizePosition.bind(this);
 		this.addUnderlines = this.addUnderlines.bind(this);
-		this.modifyUnderlines = this.modifyUnderlines.bind(this);
 		this.resetUnderlines = this.resetUnderlines.bind(this);
 		this.removeUnderline = this.removeUnderline.bind(this);
 
@@ -26,11 +25,16 @@ class GrammarExtension extends HTMLElement {
 			cssFile: whale.runtime.getURL(`css/grammar-extension.element.css`),
 			checkImg: whale.runtime.getURL(`image/check.svg`),
 			powerOffImg: whale.runtime.getURL(`image/power.svg`),
-			loadingImg: whale.runtime.getURL(`image/loading.svg`)
+			loadingImg: whale.runtime.getURL(`image/loading.svg`),
+			cautionImg: whale.runtime.getURL(`image/caution.svg`),
+			errorImg: whale.runtime.getURL(`image/error.svg`)
 		};
 	}
 	render() {
-		const { cssFile, checkImg, powerOffImg, loadingImg } = this._getFiles();
+		const {
+			cssFile, checkImg, powerOffImg,
+			loadingImg, cautionImg, errorImg
+		} = this._getFiles();
 
 		this.shadowRoot.innerHTML = `
 			<link rel="stylesheet" href="${cssFile}" />
@@ -39,6 +43,8 @@ class GrammarExtension extends HTMLElement {
 				<a href="#" class="status" id="grammar-open">
 					<img src="${checkImg}" alt="check" />
 					<img src="${loadingImg}" alt="loading" />
+					<img src="${cautionImg}" alt="too-long" />
+					<img src="${errorImg}" alt="error" />
 					<span role="grammar-error-count">0</span>
 				</a>
 				<div>
@@ -67,6 +73,9 @@ class GrammarExtension extends HTMLElement {
 		const powerEl = this.shadowRoot.querySelector(`#grammar-off`);
 		powerEl.addEventListener(`click`, e => {
 			e.preventDefault();
+			e.stopPropagation();
+
+			window.postMessage({ action: `inspectionPowerOff`, options: {} }, location.origin);
 		});
 	}
 
@@ -114,26 +123,6 @@ class GrammarExtension extends HTMLElement {
 			subIndex += 1;
 		});
 	}
-	modifyUnderlines(underlineList, missingList, { scrollTop, scrollLeft }) {
-		let lastIndex = 0, subIndex = 0;
-		underlineList.forEach(rect => {
-			const { height, width, left, top, index } = rect;
-			let nodeEl = this.underlineWrapEl.querySelector(`span[data-index="${index}"]`);
-			if(!nodeEl) {
-				nodeEl = document.createElement(`span`);
-				nodeEl.dataset.index = `${index}`;
-
-				this.underlineWrapEl.appendChild(nodeEl);
-			}
-
-			nodeEl.style.width = `${width}px`;
-			nodeEl.style.top = `${top - scrollTop + (height - 1)}px`;
-			nodeEl.style.left = `${left - scrollLeft}px`;
-		});
-		missingList.forEach(index => {
-			this.removeUnderline(index);
-		});
-	}
 	removeUnderline(index) {
 		const nodeEl = this.underlineWrapEl.querySelector(`span[data-index^="${index}"]`);
 		if(nodeEl)
@@ -156,6 +145,26 @@ class GrammarExtension extends HTMLElement {
 		} else {
 			delete this.dotEl.dataset.status;
 			delete this.dotEl.dataset.error;
+		}
+
+		switch(status) {
+			case `loading`:
+				this.dotEl.dataset.status = `loading`;
+				break;
+
+			case `error`:
+				this.dotEl.dataset.status = `error`;
+				delete this.dotEl.dataset.error;
+				break;
+
+			case `too-long`:
+				this.dotEl.dataset.status = `too-long`;
+				delete this.dotEl.dataset.error;
+				break;
+
+			default:
+				delete this.dotEl.dataset.status;
+				delete this.dotEl.dataset.error;
 		}
 	}
 }

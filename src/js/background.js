@@ -1,6 +1,6 @@
 /* global whale */
 
-import { fetchJsonp } from "./background_components/jsonp.functions";
+import { fetchJson } from "./background_components/jsonp.functions";
 
 const PORT_LIST = [];
 let EVENT_QUEUE = null;
@@ -22,21 +22,27 @@ const INSPECTION_LISTENER = {
 	},
 	inspectContent: function(port, options) {
 		const { text } = options;
-		const encodedText = window.encodeURIComponent(text);
-		const host = `https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy`;
-		const where = `whale-grammar`;
-		const url = `${host}?q=${encodedText}&where=${where}&color_blindness=0`;
-
 		port.postMessage({
 			action: `startInspection`,
 			options: {  }
 		});
-		fetchJsonp(url).then(data => {
-			const { errata_count, origin_html } = data;
+
+		fetchJson(text).then(data => {
+			const { status, errata_count, origin_html } = data;
+			if(status !== 200) {
+				console.error(data);
+			}
+
 			const error_words = this._filterErrorWords(origin_html);
 			port.postMessage({
-				action: `inspectContentResult`,
+				action: `inspectionResult`,
 				options: { error_count: errata_count, error_words }
+			});
+		}).catch(data => {
+			const { status } = data;
+			port.postMessage({
+				action: status === 0 ? `inspectionTooLong` : `inspectionError`,
+				options: {  }
 			});
 		});
 	}

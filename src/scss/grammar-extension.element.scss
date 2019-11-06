@@ -3,6 +3,7 @@ div[role="grammar-underline"] {
   display: block;
   pointer-events: none;
   overflow: hidden;
+  outline: 0 !important;
 
   span {
     opacity: .8;
@@ -23,6 +24,7 @@ div[role="grammar-dot"] {
   background-color: transparent;
   font-size: 0;
   pointer-events: auto;
+  outline: 0 !important;
 
   a.status {
     position: relative;
@@ -34,6 +36,7 @@ div[role="grammar-dot"] {
     z-index: 10;
     overflow: hidden;
     text-decoration: none;
+    outline: 0 !important;
 
     span[role="grammar-error-count"] {
       font-size: 12px;
@@ -74,6 +77,7 @@ div[role="grammar-dot"] {
     z-index: 5;
     border-radius: 15px;
     box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.14);
+    outline: 0 !important;
 
     a.power-off {
       position: relative;
@@ -121,12 +125,40 @@ div[role="grammar-dot"] {
   }
   &:not([data-status]) {
     img[alt="loading"],
+    img[alt="too-long"],
+    img[alt="error"],
     span[role="grammar-error-count"] {
       display: none;
     }
   }
   &[data-status="loading"] {
     img[alt="check"],
+    img[alt="too-long"],
+    img[alt="error"],
+    span[role="grammar-error-count"] {
+      display: none;
+    }
+  }
+  &[data-status="too-long"] {
+    a.status {
+      background-color: #ff991f !important;
+    }
+
+    img[alt="loading"],
+    img[alt="check"],
+    img[alt="error"],
+    span[role="grammar-error-count"] {
+      display: none;
+    }
+  }
+  &[data-status="error"] {
+    a.status {
+      background-color: #eae6ff;
+    }
+
+    img[alt="loading"],
+    img[alt="check"],
+    img[alt="too-long"],
     span[role="grammar-error-count"] {
       display: none;
     }
@@ -137,6 +169,8 @@ div[role="grammar-dot"] {
       background-color: #ff5757;
     }
     img[alt="loading"],
+    img[alt="too-long"],
+    img[alt="error"],
     img[alt="check"] {
       display: none !important;
     }
@@ -146,6 +180,8 @@ div[role="grammar-dot"] {
   }
   &[data-error][data-status="loading"] {
     img[alt="check"],
+    img[alt="too-long"],
+    img[alt="error"],
     span[role="grammar-error-count"] {
       display: none;
     }

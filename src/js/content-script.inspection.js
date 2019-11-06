@@ -9,16 +9,22 @@ import {
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
-	startInspection: function(options, { port, extensionEl }) {
+	startInspection: function(options, { extensionEl }) {
 		extensionEl.setDotStatus({ status: `loading` });
 	},
-	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
+	inspectionResult: function(options, { mirrorEl, extensionEl }) {
 		const { error_count, error_words } = options;
 		const { positionList } = mirrorEl.measureTextPositions(error_words);
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		extensionEl.setDotStatus({ error_count, status: `default` });
+	},
+	inspectionTooLong: function(options, { extensionEl }) {
+		extensionEl.setDotStatus({ status: `too-long` });
+	},
+	inspectionError: function(options, { extensionEl }) {
+		extensionEl.setDotStatus({ status: `error` });
 	}
 };
 const EVENT_LISTENER = {
@@ -60,10 +66,12 @@ const EVENT_LISTENER = {
 			if(this.extensionEl) this.extensionEl.remove();
 			this._injectExtensionElement(activeElement);
 
+			delete this.lastActiveEl.dataset.grammar;
 			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
 		}
 
+		activeElement.dataset.grammar = `true`;
 		this.lastActiveEl = activeElement;
 	},
 	_injectExtensionElement: function(activeElement) {
@@ -96,12 +104,20 @@ const EVENT_LISTENER = {
 			}
 		});
 	},
+	desctructListener: function() {
+		this.mirrorEl.remove();
+		this.extensionEl.remove();
+		this.port.disconnect();
+	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
 		if(
 			this._isEditableNode(activeElement) === false ||
 			activeElement.offsetHeight < 50
 		) {
+			return;
+		}
+		if(activeElement.dataset.grammar === `true`) {
 			return;
 		}
 
@@ -136,8 +152,16 @@ document.addEventListener(`DOMContentLoaded`, function() {
 		return;
 	}
 
+	const eventListener = e => EVENT_LISTENER.onDocumentFocused(e);
 	EVENT_LISTENER.initializeListener();
-	document.addEventListener(`focusin`, e => {
-		EVENT_LISTENER.onDocumentFocused(e);
-	}, true);
+	document.addEventListener(`focusin`, eventListener, true);
+	window.addEventListener(`message`, e => {
+		const { action } = e.data;
+		if(action === `inspectionPowerOff`) {
+			if(confirm(`${location.hostname} 에서\n맞춤법 검사를 비활성화 하시겠습니까?`)) {
+				document.removeEventListener(`focusin`, eventListener, true);
+				EVENT_LISTENER.desctructListener();
+			}
+		}
+	});
 });
