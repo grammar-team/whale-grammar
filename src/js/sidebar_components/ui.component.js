@@ -94,7 +94,7 @@ export function constructComponentController(sectionEl) {
 	const disableButtonEl = sectionEl.querySelector(`.inspection_bx`);
 	const segmentedTextEl =  sectionEl.querySelector(`.api_subject_bx`);
 	const textNumEl = sectionEl.querySelector(`.txt_limit strong`);
-
+	const grammarAreaEl = sectionEl.querySelector(`.grammar_area`);
 	return {
 		sectionEl,
 		inputEl,
@@ -103,6 +103,7 @@ export function constructComponentController(sectionEl) {
 		disableButtonEl,
 		segmentedTextEl,
 		textNumEl,
+		grammarAreaEl,
 
 		setText: function(e) {
 			if(typeof e !== typeof `string` || e.length < 1)

@@ -29,7 +29,7 @@
       "matches": ["https://m.search.naver.com/search.naver?from=whale-grammar&query=*"],
       "css": ["css/content-script.sidebar.css"],
       "js": ["js/content-script.sidebar.js"],
-      "all_frames": false,
+      "all_frames": true,
       "run_at": "document_start"
     }, {
       "matches": ["http://*/*", "https://*/*"],

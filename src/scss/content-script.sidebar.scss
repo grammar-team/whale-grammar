@@ -3,6 +3,7 @@
 html[data-useragent*="sidebar"] body {
   visibility: hidden;
 }
+
 body.whale-grammar {
   visibility: visible !important;
 
@@ -149,9 +150,51 @@ body.whale-grammar {
     width: 100%;
     height: 600px;
 
-    li iframe {
+    li iframe{
       width: 100%;
-      height: 600px;
+      height: 540px;
+    }
+
+    .slider__bullets {
+      text-align: center;
+
+      .slider__bullet {
+        background-color: #424242;
+        width: 12px;
+        height: 12px;
+        padding: 0;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        -webkit-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out;
+        cursor: pointer;
+        line-height: 0;
+        webkit-box-shadow: 0 0.25em 0.5em 0 rgba(0, 0, 0, .1);
+        box-shadow: 0 0.25em 0.5em 0 rgba(0, 0, 0, .1);
+        margin: 0.20em;
+        outline: none;
+      }
+      .glide__bullet--active {
+        background-color: #ff5757;
+      }
+    }
+  }
+
+  &.whale-grammar-iframe {
+    #container {
+      #grammar_checker {
+        .api_title_area {
+          display: none;
+        }
+      }
+
+      .section-content,
+      .section-buttons {
+        display: none;
+      }
+    }
+    footer {
+      display: none;
     }
   }
 }
