@@ -1,3 +1,5 @@
+@import "node_modules/@glidejs/glide/src/assets/sass/glide.core";
+
 html[data-useragent*="sidebar"] body {
   visibility: hidden;
 }
@@ -7,6 +9,7 @@ body.whale-grammar {
   header {
     display: none;
   }
+
   #container {
     padding-top: 0 !important;
 
@@ -19,10 +22,12 @@ body.whale-grammar {
       .api_banner_wrap {
         display: none;
       }
+
       .api_title_area {
         h2 {
           padding-left: 98px;
         }
+
         .whale-grammar-naver {
           display: block;
           position: absolute;
@@ -32,6 +37,7 @@ body.whale-grammar {
           margin-top: -6px;
         }
       }
+
       .inspection_bx {
         display: block !important;
 
@@ -44,6 +50,7 @@ body.whale-grammar {
           button.inspection {
             display: none;
           }
+
           span.inspection {
             display: block;
             opacity: 0.4;
@@ -63,11 +70,13 @@ body.whale-grammar {
       display: none;
     }
   }
+
   footer {
     .footer_function,
     .footer_etc_wrap {
       display: none;
     }
+
     .api_info_service {
       padding: 12px 0;
 
@@ -91,6 +100,7 @@ body.whale-grammar {
         height: 12px;
         margin-top: 3px;
       }
+
       .title {
         max-height: 6.9rem;
         -webkit-line-clamp: 3;
@@ -100,6 +110,7 @@ body.whale-grammar {
         letter-spacing: -.3px;
         margin-top: 5px;
       }
+
       .description {
         letter-spacing: 0;
         font-size: 1.4rem;
@@ -107,6 +118,7 @@ body.whale-grammar {
       }
     }
   }
+
   .section-buttons {
     list-style: none;
     margin: 0;
@@ -133,19 +145,13 @@ body.whale-grammar {
     }
   }
 
-  section.text-segment {
-    display: block !important;
+  .glide {
+    width: 100%;
+    height: 600px;
 
-    .section-content {
-      margin-top: 10px;
-      padding: 12px 18px;
-      background-color: #00c73c;
-
-      .description {
-        letter-spacing: 0;
-        font-size: 1.4rem;
-        color: #ffffff;
-      }
+    li iframe {
+      width: 100%;
+      height: 600px;
     }
   }
 }

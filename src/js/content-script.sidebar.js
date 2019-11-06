@@ -4,49 +4,90 @@ import {
 	constructComponentController
 } from "./sidebar_components/ui.component";
 
+import Glide from '@glidejs/glide'
+
 const EVENT_LISTENER = {
 	segmentTextNode : null,
 	setOriginalText: function(options, controller) {
 		const { segmentedText } = options;
-		if(segmentedText.length === 1) {
-			const [ text ] = segmentedText;
-			controller.setText(text);
-		}
-		else {
-			controller.setText(`개발필요`);
-			this.constructSegmentController(controller, segmentedText);
-		}
-	},
 
-	renderTextSegmentSection: function(segmentedText) {
-		const segmentEl = document.createElement(`section`);
-		segmentEl.className = `text-segment`;
-
-		for(let i in segmentedText) {
-			const textNode = document.createElement(`div`);
-			textNode.className = `section-content`;
-			textNode.innerHTML = `
-				<div class="description">
-					${segmentedText[i]}
-				</div>
-			`;
-
-			segmentEl.appendChild(textNode);
-		}
-
-		return segmentEl;
-	},
-
-	constructSegmentController: function(controller, segmentedText) {
 		if(this.segmentTextNode !== null) {
 			controller.segmentedTextEl.removeChild(this.segmentTextNode);
 			this.segmentTextNode = null;
 		}
 
-		const segmentEl = this.renderTextSegmentSection(segmentedText);
+		if(segmentedText.length === 1) {
+			const [ text ] = segmentedText;
+			controller.setText(text);
+		}
+		else {
+			controller.setText(`아무것도 수행기능 없음`);
+			//this.constructSegmentController(controller, segmentedText);
+		}
+	},
+	renderSliderSection: function(segmentedText) {
+		const segmentEl = document.createElement(`div`);
+		segmentEl.className = `glide`;
+		const glideTrackEl = document.createElement('div');
+		glideTrackEl.className = `glide__track`;
+		glideTrackEl.setAttribute(`data-glide-el`, `track`);
+		const glideWrapperEl = document.createElement('ul');
+		glideWrapperEl.className = `glide__slides`;
+
+		for(let i in segmentedText) {
+			const textNode = document.createElement(`li`);
+			textNode.className = `glide__slide`;
+			textNode.innerHTML = `<iframe src=\"https://m.search.naver.com/search.naver?from=whale-grammar&query=맞춤법+검사기\">`;
+			glideWrapperEl.appendChild(textNode);
+			console.log('textNode:', textNode);
+		}
+		console.log('glideWrapperEl', glideWrapperEl);
+		glideTrackEl.appendChild(glideWrapperEl);
+		segmentEl.appendChild(glideTrackEl);
+
+		return segmentEl;
+	},
+	renderTextSegmentSection: function(segmentedText) {
+		const segmentEl = document.createElement(`div`);
+		segmentEl.className = `glide`;
+		const glideTrackEl = document.createElement('div');
+		glideTrackEl.className = `glide__track`;
+		glideTrackEl.setAttribute(`data-glide-el`, `track`);
+		const glideWrapperEl = document.createElement('ul');
+		glideWrapperEl.className = `glide__slides`;
+
+		for(let i in segmentedText) {
+			const textNode = document.createElement(`li`);
+			textNode.className = `glide__slide`;
+			textNode.innerHTML = `${segmentedText[i]}`;
+
+			glideWrapperEl.appendChild(textNode);
+		}
+		glideTrackEl.appendChild(glideWrapperEl);
+		segmentEl.appendChild(glideTrackEl);
+
+		return segmentEl;
+	},
+
+	constructSegmentController: function(controller, segmentedText) {
+		//const segmentEl = this.renderTextSegmentSection(segmentedText);
+		//this.segmentTextNode = segmentEl;
+		const segmentEl = this.renderSliderSection(segmentedText);
 		this.segmentTextNode = segmentEl;
 
 		controller.segmentedTextEl.insertBefore(segmentEl, controller.segmentedTextEl.firstElementChild.nextSibling);
+		this.glideSetup();
+	},
+
+	glideSetup: function() {
+		//new Glide('.glide').mount(); // default setting
+		new Glide('.glide', {
+			type: 'carousel',
+			autoplay: 0,
+			animationDuration: 300,
+			animationTimingFunc: 'linear',
+			perView: 1
+		}).mount();
 	}
 };
 
