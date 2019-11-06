@@ -41,7 +41,7 @@
   ],
 
   "permissions": [
-    "https://m.search.naver.com",
+    "https://m.search.naver.com/",
     "tabs"
   ],
   "web_accessible_resources": [
