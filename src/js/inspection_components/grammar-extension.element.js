@@ -60,12 +60,15 @@ class GrammarExtension extends HTMLElement {
 	}
 	bindClickEvents() {
 		const openEl = this.shadowRoot.querySelector(`#grammar-open`);
+
 		openEl.addEventListener(`click`, e => {
 			e.preventDefault();
+
+			const { value, innerText } = this.targetEl;
 			whale.runtime.sendMessage({
 				action: `setOriginalText`,
 				options: {
-					text: this.targetEl.value
+					text: value || innerText
 				}
 			});
 		});
