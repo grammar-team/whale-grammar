@@ -50,6 +50,8 @@
     "image/check.svg",
     "image/power.svg",
     "image/loading.svg",
+    "image/caution.svg",
+    "image/error.svg",
     "css/grammar-extension.element.css"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'"

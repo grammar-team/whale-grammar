@@ -9,16 +9,22 @@ import {
 import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
-	startInspection: function(options, { port, extensionEl }) {
+	startInspection: function(options, { extensionEl }) {
 		extensionEl.setDotStatus({ status: `loading` });
 	},
-	inspectContentResult: function(options, { port, mirrorEl, extensionEl }) {
+	inspectionResult: function(options, { mirrorEl, extensionEl }) {
 		const { error_count, error_words } = options;
 		const { positionList } = mirrorEl.measureTextPositions(error_words);
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		extensionEl.setDotStatus({ error_count, status: `default` });
+	},
+	inspectionTooLong: function(options, { extensionEl }) {
+		extensionEl.setDotStatus({ status: `too-long` });
+	},
+	inspectionError: function(options, { extensionEl }) {
+		extensionEl.setDotStatus({ status: `error` });
 	}
 };
 const EVENT_LISTENER = {

@@ -25,11 +25,16 @@ class GrammarExtension extends HTMLElement {
 			cssFile: whale.runtime.getURL(`css/grammar-extension.element.css`),
 			checkImg: whale.runtime.getURL(`image/check.svg`),
 			powerOffImg: whale.runtime.getURL(`image/power.svg`),
-			loadingImg: whale.runtime.getURL(`image/loading.svg`)
+			loadingImg: whale.runtime.getURL(`image/loading.svg`),
+			cautionImg: whale.runtime.getURL(`image/caution.svg`),
+			errorImg: whale.runtime.getURL(`image/error.svg`)
 		};
 	}
 	render() {
-		const { cssFile, checkImg, powerOffImg, loadingImg } = this._getFiles();
+		const {
+			cssFile, checkImg, powerOffImg,
+			loadingImg, cautionImg, errorImg
+		} = this._getFiles();
 
 		this.shadowRoot.innerHTML = `
 			<link rel="stylesheet" href="${cssFile}" />
@@ -38,6 +43,8 @@ class GrammarExtension extends HTMLElement {
 				<a href="#" class="status" id="grammar-open">
 					<img src="${checkImg}" alt="check" />
 					<img src="${loadingImg}" alt="loading" />
+					<img src="${cautionImg}" alt="too-long" />
+					<img src="${errorImg}" alt="error" />
 					<span role="grammar-error-count">0</span>
 				</a>
 				<div>
@@ -138,6 +145,26 @@ class GrammarExtension extends HTMLElement {
 		} else {
 			delete this.dotEl.dataset.status;
 			delete this.dotEl.dataset.error;
+		}
+
+		switch(status) {
+			case `loading`:
+				this.dotEl.dataset.status = `loading`;
+				break;
+
+			case `error`:
+				this.dotEl.dataset.status = `error`;
+				delete this.dotEl.dataset.error;
+				break;
+
+			case `too-long`:
+				this.dotEl.dataset.status = `too-long`;
+				delete this.dotEl.dataset.error;
+				break;
+
+			default:
+				delete this.dotEl.dataset.status;
+				delete this.dotEl.dataset.error;
 		}
 	}
 }
