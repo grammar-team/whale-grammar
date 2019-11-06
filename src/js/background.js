@@ -1,6 +1,7 @@
 /* global whale */
 
 import { fetchJson } from "./background_components/jsonp.functions";
+import splitText from "./background_components/split.function";
 
 const PORT_LIST = [];
 let EVENT_QUEUE = null;
@@ -53,29 +54,6 @@ function onMessagePushQueue(message) {
     whale.sidebarAction.show();
 }
 
-function SplitText(getText) {
-    const sentences = getText.replace(/(\.|\:|\!|\?|\n)(\n|\r|\r\n)*(?=[\s가-힣0-9])/gm, "$1$2|").split("|");
-    let textContainer = [];
-    let textCat = "";
-    let sum = 0;
-
-    for(let i in sentences) {
-        if(sum + sentences[i].length > 500) {
-            textContainer.push(textCat);
-            textCat = "";
-            sum = 0;
-        }
-        textCat += sentences[i];
-        sum += sentences[i].length;
-
-        if(i == sentences.length-1) {
-            textContainer.push(textCat);
-        }
-    }
-
-    return textContainer;
-}
-
 whale.runtime.onConnect.addListener(function(port) {
     if(!port.name.includes(`grammar-sidebar-`))
         return;
@@ -86,9 +64,9 @@ whale.runtime.onConnect.addListener(function(port) {
         whale.sidebarAction.show();
 
         if(EVENT_QUEUE === null) {
-            const {action, options} = message;
-            const {text} = options;
-            const segmentedText = SplitText(text);
+            const { action, options } = message;
+            const { text } = options;
+            const segmentedText = splitText(text);
             options.segmentedText = segmentedText;
 
             port.postMessage({action, options});
@@ -113,9 +91,10 @@ whale.runtime.onConnect.addListener(function(port) {
     });
 
     if(EVENT_QUEUE !== null) {
+    	console.log(EVENT_QUEUE);
         const { action, options } = EVENT_QUEUE;
         const { text } = options;
-        const segmentedText = SplitText(text);
+        const segmentedText = splitText(text);
         options.segmentedText = segmentedText;
 
         /*setTimeout(function() {

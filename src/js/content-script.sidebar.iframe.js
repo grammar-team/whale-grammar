@@ -1,4 +1,4 @@
-import { isSidebar, constructComponentController } from "./sidebar_components/ui.component";
+import { isSidebarFrame, constructComponentController } from "./sidebar_components/ui.component";
 
 const EVENT_LISTENER = {
 	controller: null,
@@ -19,11 +19,12 @@ const EVENT_LISTENER = {
 
 let isDocumentLoaded = false;
 (function() {
-	if(isSidebar() === false || window.parent === window) {
+	if(isSidebarFrame() === false || window.parent === window) {
 		return;
 	}
 
 	window.addEventListener(`message`, function(e) {
+		console.log(`iframe loaded:wow!`);
 		const { action, options } = e.data;
 		if(
 			EVENT_LISTENER.hasOwnProperty(action) &&

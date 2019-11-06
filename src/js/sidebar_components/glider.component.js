@@ -28,6 +28,13 @@ function renderSliderSection(segmentedText) {
 		const liEl = document.createElement('li');
 		const frameEl = document.createElement(`iframe`);
 		frameEl.src = `${location.toString()}`;
+		frameEl.addEventListener(`load`, function(e) {
+			console.log(`iframe loaded`);
+			e.target.contentWindow.postMessage({
+				action: `setOriginalText`,
+				options: { text: segmentedText[i] }
+			}, `*`);
+		});
 
 		liEl.className = `glide__slide`;
 		liEl.appendChild(frameEl);

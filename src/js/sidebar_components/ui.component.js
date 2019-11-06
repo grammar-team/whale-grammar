@@ -14,6 +14,18 @@ export function isSidebar() {
 
 	return false;
 }
+export function isSidebarFrame() {
+	const { userAgent } = window.navigator;
+	const { href } = window.location;
+	if(
+		userAgent.includes(`sidebar`) &&
+		href.includes(`whale-grammar`)
+	) {
+		return true;
+	}
+
+	return false;
+}
 
 function duplicateInspectButton(parentEl) {
 	const buttonEl = parentEl.querySelector(`button`);

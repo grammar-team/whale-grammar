@@ -28,7 +28,7 @@
     {
       "matches": ["https://m.search.naver.com/search.naver?from=whale-grammar&query=*"],
       "css": ["css/content-script.sidebar.css"],
-      "js": ["js/content-script.sidebar.js"],
+      "js": ["js/content-script.sidebar.js", "js/content-script.sidebar.iframe.js"],
       "all_frames": true,
       "run_at": "document_start"
     }, {
