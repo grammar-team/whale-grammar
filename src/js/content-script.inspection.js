@@ -60,10 +60,12 @@ const EVENT_LISTENER = {
 			if(this.extensionEl) this.extensionEl.remove();
 			this._injectExtensionElement(activeElement);
 
+			delete this.lastActiveEl.dataset.grammar;
 			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
 		}
 
+		activeElement.dataset.grammar = `true`;
 		this.lastActiveEl = activeElement;
 	},
 	_injectExtensionElement: function(activeElement) {
@@ -102,6 +104,9 @@ const EVENT_LISTENER = {
 			this._isEditableNode(activeElement) === false ||
 			activeElement.offsetHeight < 50
 		) {
+			return;
+		}
+		if(activeElement.dataset.grammar === `true`) {
 			return;
 		}
 
