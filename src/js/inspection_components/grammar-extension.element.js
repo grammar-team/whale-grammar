@@ -66,6 +66,9 @@ class GrammarExtension extends HTMLElement {
 		const powerEl = this.shadowRoot.querySelector(`#grammar-off`);
 		powerEl.addEventListener(`click`, e => {
 			e.preventDefault();
+			e.stopPropagation();
+
+			window.postMessage({ action: `inspectionPowerOff`, options: {} }, location.origin);
 		});
 	}
 

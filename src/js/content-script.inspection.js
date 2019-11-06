@@ -98,6 +98,11 @@ const EVENT_LISTENER = {
 			}
 		});
 	},
+	desctructListener: function() {
+		this.mirrorEl.remove();
+		this.extensionEl.remove();
+		this.port.disconnect();
+	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
 		if(
@@ -141,8 +146,16 @@ document.addEventListener(`DOMContentLoaded`, function() {
 		return;
 	}
 
+	const eventListener = e => EVENT_LISTENER.onDocumentFocused(e);
 	EVENT_LISTENER.initializeListener();
-	document.addEventListener(`focusin`, e => {
-		EVENT_LISTENER.onDocumentFocused(e);
-	}, true);
+	document.addEventListener(`focusin`, eventListener, true);
+	window.addEventListener(`message`, e => {
+		const { action } = e.data;
+		if(action === `inspectionPowerOff`) {
+			if(confirm(`${location.hostname} 에서\n맞춤법 검사를 비활성화 하시겠습니까?`)) {
+				document.removeEventListener(`focusin`, eventListener, true);
+				EVENT_LISTENER.desctructListener();
+			}
+		}
+	});
 });
