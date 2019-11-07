@@ -23,7 +23,7 @@ class GrammarExtension extends HTMLElement {
 	_getFiles() {
 		return {
 			cssFile: whale.runtime.getURL(`css/grammar-extension.element.css`),
-			checkImg: whale.runtime.getURL(`image/check.svg`),
+			checkImg: whale.runtime.getURL(`image/default.png`),
 			powerOffImg: whale.runtime.getURL(`image/power.svg`),
 			loadingImg: whale.runtime.getURL(`image/loading.svg`),
 			cautionImg: whale.runtime.getURL(`image/caution.svg`),

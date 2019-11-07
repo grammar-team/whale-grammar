@@ -44,9 +44,9 @@
     "tabs"
   ],
   "web_accessible_resources": [
+    "image/default.png",
     "image/contest_logo.png",
     "image/naver_logo.png",
-    "image/check.svg",
     "image/power.svg",
     "image/loading.svg",
     "image/caution.svg",
