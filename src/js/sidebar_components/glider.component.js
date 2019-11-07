@@ -6,9 +6,13 @@ function renderSliderSection(segmentedText) {
 	segmentEl.className = `glide`;
 	segmentEl.innerHTML =
 		`<div class="glide__arrows" data-glide-el="controls">
-			<button class="glide__arrow glide__arrow--prev" data-glide-dir="<"><</button>
-			<span class="arrow_index">(1 / ${segmentedText.length})</span>
-			<button class="glide__arrow glide__arrow--next" data-glide-dir=">">></button>
+			<button class="glide__arrow glide__arrow--prev" data-glide-dir="<">◀</button>
+			<span class="index_wrapper">
+				<span class="index_current">1</span>
+				<span class="index_middle">/</span>
+				<span class="index_max">${segmentedText.length}</span>
+			</span>
+			<button class="glide__arrow glide__arrow--next" data-glide-dir=">">▶</button>
     	</div>
 		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides"></ul>
@@ -31,7 +35,7 @@ function renderSliderSection(segmentedText) {
 		liEl.appendChild(frameEl);
 		listEl.appendChild(liEl);
 	}
-	const buttonEventEl = segmentEl.querySelector('.arrow_index');
+	const buttonEventEl = segmentEl.querySelector('.index_current');
 	return { segmentEl, buttonEventEl };
 }
 function glideSetup() {
@@ -54,7 +58,7 @@ export function constructSegmentController(controller, segmentedText) {
 	controller.segmentedTextEl.insertBefore(segmentEl, controller.segmentedTextEl.firstElementChild.nextSibling);
 	const glide = glideSetup();
 	glide.on(['mount.after', 'run'], function () {
-		buttonEventEl.innerHTML = `( ${glide.index+1} / ${segmentedText.length} )`;
+		buttonEventEl.innerHTML = `${glide.index+1}`;
 	})
 
 	return { segmentEl };

@@ -160,25 +160,55 @@ body.whale-grammar {
     }
     .glide__arrows {
       text-align: center;
-      .arrow_index {
-        display: inline-block;
-        width: 20%;
-        height: 3vh;
-        line-height: 3vh;
+      .index_wrapper {
+        display: inline-flex;
+        justify-content: space-evenly;
+        width: 40%;
+        height: 4vh;
+        line-height: 4vh;
         text-align: center;
-        background-color: #e2e5e8;
+        background-color: #ffffff;
+        .index_current {
+          display: inline-block;
+          width: 30%;
+          height: 4.4vh;
+          line-height: 4vh;
+          text-align: center;
+          border: 2px solid #00c73c;
+          color: #00c73c;
+          font-weight: 600;
+        }
+        .index_middle {
+          display: inline-block;
+          width: 4vw;
+          height: 4vh;
+          line-height: 4vh;
+          text-align: center;
+          color: #00c73c;
+          font-weight: 600;
+        }
+        .index_max {
+          display: inline-block;
+          width: 4vw;
+          height: 4vh;
+          line-height: 4vh;
+          text-align: center;
+          color: #00c73c;
+          font-weight: 600;
+        }
       }
 
       .glide__arrow {
         background-color: #00c73c;
-        width: 38%;
-        height: 3vh;
+        width: 10%;
+        height: 4.5vh;
         padding: 0;
         border-radius: 0%;
         border: 0px solid transparent;
         cursor: pointer;
         margin: 0;
         outline: none;
+        color: #ffffff;
       }
     }
   }
