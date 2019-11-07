@@ -13,7 +13,11 @@ const EVENT_LISTENER = {
 		this.initializeListener();
 
 		const { text } = options;
-		this.controller.setText(text);
+		//this.controller.setText(text);
+
+		setTimeout(function() {
+			EVENT_LISTENER.controller.setText(text);
+		}, 1000);
 	}
 };
 

@@ -10,7 +10,7 @@ import {
 const EVENT_LISTENER = {
 	iframeEl : null,
 	setOriginalText: function(options, controller) {
-		const {segmentedText} = options;
+		const { segmentedText } = options;
 
 		if (this.iframeEl !== null) {
 			controller.segmentedTextEl.removeChild(this.iframeEl);
@@ -20,7 +20,14 @@ const EVENT_LISTENER = {
 		if (segmentedText.length === 1) {
 			controller.grammarAreaEl.style.display = 'block';
 			const [text] = segmentedText;
-			controller.setText(text);
+			if(document.readyState === 'complete') {
+				controller.setText(text);
+			} else {
+				setTimeout(function() {
+				controller.setText(text);
+				}, 1000);
+			}
+
 		} else {
 			controller.grammarAreaEl.style.display = 'none';
 
