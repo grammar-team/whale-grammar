@@ -16,6 +16,10 @@ export function findProperParent(nodeEl) {
 }
 
 export function getElementMargin(targetEl) {
+	if(targetEl === document.documentElement || targetEl === document.body) {
+		return { marginTop: 0, marginLeft: 0 };
+	}
+
 	const computedStyles = window.getComputedStyle(targetEl);
 	const margin = computedStyles.getPropertyValue(`margin`).split(` `);
 	switch(margin.length) {
