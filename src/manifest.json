@@ -13,7 +13,9 @@
   "sidebar_action": {
     "default_page": "sidebar.html",
     "default_icon": {
-      "16": "image/dummy_128.png"
+      "64": "image/gray_logo.png",
+      "32": "image/gray_logo.png",
+      "16": "image/gray_logo.png"
     },
 
     "default_title": "웨않되",
