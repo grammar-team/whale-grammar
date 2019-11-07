@@ -6,7 +6,8 @@ function renderSliderSection(segmentedText) {
 	const imgSrc = `https://ssl.pstatic.net/sstatic/keypage/outside/scui/grammar_check/im/sp_grammar_check.png`;
 	segmentEl.className = `glide`;
 	segmentEl.innerHTML =
-		`<div class="glide__arrows" data-glide-el="controls">
+		`<a href="#" class="close-iframe" style="background-image: url('${imgSrc}');"></a>
+		 <div class="glide__arrows" data-glide-el="controls">
 			<button class="glide__arrow glide__arrow--prev" data-glide-dir="<">◀</button>
 			<span class="index_wrapper">
 				<span class="index_current">1</span>
@@ -14,7 +15,6 @@ function renderSliderSection(segmentedText) {
 				<span class="index_max">${segmentedText.length}</span>
 			</span>
 			<button class="glide__arrow glide__arrow--next" data-glide-dir=">">▶</button>
-			<a href="#" class="close-iframe" style="background-image: url('${imgSrc}');"></a>
     	</div>
 		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides"></ul>
