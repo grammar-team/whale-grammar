@@ -8,12 +8,13 @@ import {
 } from "./sidebar_components/glider.component";
 
 const EVENT_LISTENER = {
-	iframeEl : null,
+	segmentTextNode : null,
 	setOriginalText: function(options, controller) {
 		const { segmentedText } = options;
-		if(this.iframeEl !== null) {
-			controller.segmentedTextEl.removeChild(this.iframeEl);
-			this.iframeEl = null;
+
+		if(this.segmentTextNode !== null) {
+			controller.segmentedTextEl.removeChild(this.segmentTextNode);
+			this.segmentTextNode = null;
 		}
 
 		if(segmentedText.length === 1) {
@@ -25,7 +26,6 @@ const EVENT_LISTENER = {
 			controller.grammarAreaEl.style.display = 'none';
 
 			const { segmentEl, frameList, glide } = constructSegmentController(controller, segmentedText);
-			this.iframeEl = segmentEl;
 		}
 	}
 };

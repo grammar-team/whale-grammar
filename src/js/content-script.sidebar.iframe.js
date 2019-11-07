@@ -24,6 +24,7 @@ let isDocumentLoaded = false;
 	}
 
 	window.addEventListener(`message`, function(e) {
+		console.log(`iframe loaded:wow!`);
 		const { action, options } = e.data;
 		if(
 			EVENT_LISTENER.hasOwnProperty(action) &&
