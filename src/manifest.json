@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "description": "웨일 브라우저용 한글 맞춤법 검사기 (feat. NAVER 맞춤법 검사기)",
   "icons": {
-    "32": "image/icons/application_logo_32.png",
+    "16": "image/icons/contextmenu_logo_16.png",
+    "32": "image/icons/contextmenu_logo_32.png",
     "48": "image/icons/application_logo_48.png",
     "64": "image/icons/application_logo_64.png",
     "128": "image/icons/application_logo_128.png"
@@ -42,7 +43,8 @@
   "permissions": [
     "https://m.search.naver.com/",
     "tabs",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "web_accessible_resources": [
     "image/default.png",

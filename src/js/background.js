@@ -3,9 +3,6 @@
 import { fetchJson } from "./background_components/jsonp.functions";
 import splitText from "./background_components/split.function";
 
-const PORT_LIST = [];
-let EVENT_QUEUE = null;
-
 const INSPECTION_LISTENER = {
 	_filterErrorWords: (html) => {
 		const nodeEl = document.createElement(`div`);
@@ -48,64 +45,119 @@ const INSPECTION_LISTENER = {
 		});
 	}
 };
+const SIDEBAR_LISTENER = {
+	portList: {},
+	eventQueue: [],
 
-function onMessagePushQueue(message) {
-    EVENT_QUEUE = message;
-    whale.sidebarAction.show();
-}
+	_broadcastMessage: function(message) {
+		Object.keys(this.portList).forEach(v => {
+			this.portList[v].postMessage(message);
+		});
+	},
+	onMessageCallback: function(message) {
+		const { action, options } = message;
+		const { text } = options;
+		if(text !== undefined) {
+			options.segmentedText = splitText(text);
+		}
 
+		this._broadcastMessage({ action, options });
+		whale.sidebarAction.show();
+	},
+	onMessagePushQueue: function(message) {
+		const { action, options } = message;
+		const { text } = options;
+		if(text !== undefined) {
+			options.segmentedText = splitText(text);
+		}
+
+		this.eventQueue.push({ action, options });
+		whale.sidebarAction.show();
+	},
+	popAllMessages() {
+		this.eventQueue.forEach(message => {
+			this._broadcastMessage(message);
+		});
+
+		this.eventQueue = [];
+	}
+};
+const CONTEXT_MENU = {
+	menuProperty: {
+		title: `선택된 텍스트 맞춤법 검사하기`,
+		contexts: [ `selection` ],
+	},
+
+	createContextMenu: function() {
+		this.removeAll(() => {
+			whale.contextMenus.create({
+				...this.menuProperty,
+				onclick: function(info) {
+					const { selectionText } = info;
+					const message = {
+						action: `setOriginalText`,
+						options: {
+							text: selectionText,
+							segmentedText: splitText(selectionText)
+						}
+					};
+
+					onMessagePushQueue(message);
+				}
+			});
+		});
+	},
+	createContextMenuWithPort: function() {
+		this.removeAll(() => {
+			whale.contextMenus.create({
+				...this.menuProperty,
+				onclick: function(info) {
+					const { selectionText } = info;
+					const message = {
+						action: `setOriginalText`,
+						options: {
+							text: selectionText,
+							segmentedText: splitText(selectionText)
+						}
+					};
+
+					SIDEBAR_LISTENER._broadcastMessage(message);
+					whale.sidebarAction.show();
+				}
+			});
+		});
+	},
+	removeAll: function(callback) {
+		whale.contextMenus.removeAll(callback);
+	}
+};
+
+const onMessagePushQueue = e => SIDEBAR_LISTENER.onMessagePushQueue(e);
+const onMessageCallback = e => SIDEBAR_LISTENER.onMessageCallback(e);
 whale.runtime.onConnect.addListener(function(port) {
-    if(!port.name.includes(`grammar-sidebar-`))
+	const { name } = port;
+    if(!name.includes(`grammar-sidebar-`))
         return;
 
-    PORT_LIST.push(port);
-
-    const onMessageCallback = function (message) {
-        whale.sidebarAction.show();
-
-        if(EVENT_QUEUE === null) {
-            const { action, options } = message;
-            const { text } = options;
-            const segmentedText = splitText(text);
-            options.segmentedText = segmentedText;
-
-            port.postMessage({action, options});
-        }
-    };
-
-    whale.runtime.onMessage.removeListener(onMessagePushQueue);
-    whale.runtime.onMessage.addListener(onMessageCallback);
+    SIDEBAR_LISTENER.portList[name] = port;
+    if(Object.keys(SIDEBAR_LISTENER.portList).length === 1) {
+		whale.runtime.onMessage.removeListener(onMessagePushQueue);
+		whale.runtime.onMessage.addListener(onMessageCallback);
+		CONTEXT_MENU.createContextMenuWithPort();
+	}
 
     port.onDisconnect.addListener(() => {
-        whale.runtime.onMessage.removeListener(onMessageCallback);
+        delete SIDEBAR_LISTENER.portList[name];
 
-        for(let i = 0; i < PORT_LIST.length; i++) {
-            if(PORT_LIST[i].name === port.name) {
-                PORT_LIST.splice(i, 1);
-            }
-        }
-
-        if(PORT_LIST.length < 1) {
+        if(Object.keys(SIDEBAR_LISTENER.portList).length < 1) {
+			whale.runtime.onMessage.removeListener(onMessageCallback);
             whale.runtime.onMessage.addListener(onMessagePushQueue);
+            CONTEXT_MENU.createContextMenu();
         }
     });
 
-    if(EVENT_QUEUE !== null) {
-    	console.log(EVENT_QUEUE);
-        const { action, options } = EVENT_QUEUE;
-        const { text } = options;
-        const segmentedText = splitText(text);
-        options.segmentedText = segmentedText;
-
-        /*setTimeout(function() {
-            port.postMessage({ action, options });
-        }, 3000);
-        */
-        port.postMessage({ action, options });
-        EVENT_QUEUE = null;
-    }
+    SIDEBAR_LISTENER.popAllMessages();
 });
-
 whale.runtime.onConnect.addListener(function(port) {
     if(port.name !== `grammar-inspection`)
         return;
@@ -119,5 +171,5 @@ whale.runtime.onConnect.addListener(function(port) {
             INSPECTION_LISTENER[action](port, options);
     });
 });
-
 whale.runtime.onMessage.addListener(onMessagePushQueue);
+CONTEXT_MENU.createContextMenu();
