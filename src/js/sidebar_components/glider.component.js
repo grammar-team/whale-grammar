@@ -29,7 +29,6 @@ function renderSliderSection(segmentedText) {
 		const frameEl = document.createElement(`iframe`);
 		frameEl.src = `${location.toString()}`;
 		frameEl.addEventListener(`load`, function(e) {
-			console.log(`iframe loaded`);
 			e.target.contentWindow.postMessage({
 				action: `setOriginalText`,
 				options: { text: segmentedText[i] }
