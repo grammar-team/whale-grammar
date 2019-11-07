@@ -3,10 +3,14 @@ import GrammarExtension from "./inspection_components/grammar-extension.element"
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { isSidebar } from "./sidebar_components/ui.component";
+import { addURLtoBlacklist, isURLinBlacklist } from "./inspection_components/blacklist.component";
 import {
 	renderMirrorElement, onTextAreaFocused, onEditableElementFocused
 } from "./inspection_components/grammar-mirror.functions";
-import { renderExtensionElement, findProperParent } from "./inspection_components/grammar-extension.functions";
+import {
+	renderExtensionElement,
+	findProperParent
+} from "./inspection_components/grammar-extension.functions";
 
 const PORT_LISTENER = {
 	startInspection: function(options, { extensionEl }) {
@@ -57,25 +61,24 @@ const EVENT_LISTENER = {
 
 		return false;
 	},
-	_resetThings: function(activeElement, force) {
+	__resetThings: function() {
+		if(this.styleObserver) { this.styleObserver.disconnect(); }
+		if(this.extensionEl) this.extensionEl.remove();
+
+		delete this.lastActiveEl.dataset.grammar;
+		this.lastActiveEl.removeEventListener(`input`, this.inputListener);
+		this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
+	},
+	_resetThings: function(activeElement) {
 		if(this.lastActiveEl === null) {
 			this._injectExtensionElement(activeElement);
-		} else if(this._isNeedReset(activeElement) || force) {
-			if(this.styleObserver) { this.styleObserver.disconnect(); }
-
-			if(this.extensionEl) this.extensionEl.remove();
+		} else if(this._isNeedReset(activeElement)) {
+			this.__resetThings();
 			this._injectExtensionElement(activeElement);
+		}
 
-			delete this.lastActiveEl.dataset.grammar;
-			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
-			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
-		}
-		if(force) {
-			this.lastActiveEl = null;
-		} else {
-			activeElement.dataset.grammar = `true`;
-			this.lastActiveEl = activeElement;
-		}
+		activeElement.dataset.grammar = `true`;
+		this.lastActiveEl = activeElement;
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
@@ -111,7 +114,7 @@ const EVENT_LISTENER = {
 		this.mirrorEl.remove();
 		this.extensionEl.remove();
 		this.port.disconnect();
-		this._resetThings(this.lastActiveEl, true);
+		this.__resetThings();
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
@@ -156,16 +159,24 @@ document.addEventListener(`DOMContentLoaded`, function() {
 		return;
 	}
 
-	const eventListener = e => EVENT_LISTENER.onDocumentFocused(e);
-	EVENT_LISTENER.initializeListener();
-	document.addEventListener(`focusin`, eventListener, true);
-	window.addEventListener(`message`, e => {
-		const { action } = e.data;
-		if(action === `inspectionPowerOff`) {
-			if(confirm(`${location.hostname} 에서\n맞춤법 검사를 비활성화 하시겠습니까?`)) {
-				document.removeEventListener(`focusin`, eventListener, true);
-				EVENT_LISTENER.destructListener();
-			}
+	const { hostname } = location;
+	isURLinBlacklist(hostname).then(isBlocked => {
+		if(isBlocked === true) {
+			return;
 		}
+
+		const eventListener = e => EVENT_LISTENER.onDocumentFocused(e);
+		EVENT_LISTENER.initializeListener();
+		document.addEventListener(`focusin`, eventListener, true);
+		window.addEventListener(`message`, e => {
+			const { action } = e.data;
+			if(action === `inspectionPowerOff`) {
+				if(confirm(`${hostname} 에서\n맞춤법 검사를 비활성화 하시겠습니까?`)) {
+					document.removeEventListener(`focusin`, eventListener, true);
+					EVENT_LISTENER.destructListener();
+					addURLtoBlacklist(hostname);
+				}
+			}
+		});
 	});
 });

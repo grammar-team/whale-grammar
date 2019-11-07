@@ -41,7 +41,8 @@
 
   "permissions": [
     "https://m.search.naver.com/",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "web_accessible_resources": [
     "image/default.png",
