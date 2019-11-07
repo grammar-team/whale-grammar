@@ -1,30 +1,21 @@
 import Glide from "@glidejs/glide/dist/glide";
 
-function renderSliderButtonSection(num) {
-	const bulletEl = document.createElement('div');
-	bulletEl.className = `slider__bullets glide__bullets`;
-	bulletEl.setAttribute(`data-glide-el`, `controls[nav]`);
-	for(let i = 0; i < num; i++) {
-		const buttonEl = document.createElement('button');
-		buttonEl.className = `slider__bullet glide__bullet`;
-		buttonEl.setAttribute(`data-glide-dir`, `=${i}`);
-		buttonEl.style.width = `${parseInt((100-(num-1)/2)/num)}%`;
-	;	bulletEl.appendChild(buttonEl);
-	}
-
-	return bulletEl;
-}
 function renderSliderSection(segmentedText) {
 	const segmentEl = document.createElement('div');
+
 	segmentEl.className = `glide`;
 	segmentEl.innerHTML =
-		`<div class="glide__track" data-glide-el="track">
+		`<div class="glide__arrows" data-glide-el="controls">
+			<button class="glide__arrow glide__arrow--prev" data-glide-dir="<"><</button>
+			<span class="arrow_index">(1 / ${segmentedText.length})</span>
+			<button class="glide__arrow glide__arrow--next" data-glide-dir=">">></button>
+    	</div>
+		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides"></ul>
 		</div>`
 	;
 
 	const listEl = segmentEl.querySelector(`ul`);
-	const frameList = [];
 	for(let i in segmentedText) {
 		const liEl = document.createElement('li');
 		const frameEl = document.createElement(`iframe`);
@@ -39,14 +30,9 @@ function renderSliderSection(segmentedText) {
 		liEl.className = `glide__slide`;
 		liEl.appendChild(frameEl);
 		listEl.appendChild(liEl);
-
-		frameList.push(frameEl);
 	}
-
-	const bulletEl = renderSliderButtonSection(segmentedText.length);
-	segmentEl.appendChild(bulletEl);
-
-	return { segmentEl, frameList };
+	const buttonEventEl = segmentEl.querySelector('.arrow_index');
+	return { segmentEl, buttonEventEl };
 }
 function glideSetup() {
 	const glide = new Glide('.glide', {
@@ -63,10 +49,13 @@ function glideSetup() {
 }
 
 export function constructSegmentController(controller, segmentedText) {
-	const { segmentEl, frameList } = renderSliderSection(segmentedText);
+	const { segmentEl, buttonEventEl } = renderSliderSection(segmentedText);
 
 	controller.segmentedTextEl.insertBefore(segmentEl, controller.segmentedTextEl.firstElementChild.nextSibling);
 	const glide = glideSetup();
+	glide.on(['mount.after', 'run'], function () {
+		buttonEventEl.innerHTML = `( ${glide.index+1} / ${segmentedText.length} )`;
+	})
 
-	return { segmentEl, frameList, glide };
+	return { segmentEl };
 }
