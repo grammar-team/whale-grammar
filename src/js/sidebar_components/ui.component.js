@@ -107,6 +107,8 @@ export function constructComponentController(sectionEl) {
 	const segmentedTextEl =  sectionEl.querySelector(`.api_subject_bx`);
 	const textNumEl = sectionEl.querySelector(`.txt_limit strong`);
 	const grammarAreaEl = sectionEl.querySelector(`.grammar_area`);
+	const resultBoxEl = sectionEl.querySelector(`.result_bx`);
+
 	return {
 		sectionEl,
 		inputEl,
@@ -127,6 +129,19 @@ export function constructComponentController(sectionEl) {
 			disableButtonEl.style.display = `block`;
 			this.textNumEl.innerText = e.length;
 			this.runInspection();
+		},
+		setTextMutation: function(e) {
+			let timeout;
+			const observer = new MutationObserver(() => {
+				clearInterval(timeout);
+				observer.disconnect();
+			});
+
+			observer.observe(resultBoxEl, {
+				attributes: true,
+				childList: true
+			});
+			timeout = setInterval(() => this.setText(e), 100);
 		},
 		runInspection: function() {
 			this.buttonEl.click();

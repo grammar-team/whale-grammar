@@ -23,9 +23,7 @@ const EVENT_LISTENER = {
 			if(document.readyState === 'complete') {
 				controller.setText(text);
 			} else {
-				setTimeout(function() {
-				controller.setText(text);
-				}, 1000);
+				controller.setTextMutation(text);
 			}
 
 		} else {
