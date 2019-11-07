@@ -57,10 +57,10 @@ const EVENT_LISTENER = {
 
 		return false;
 	},
-	_resetThings: function(activeElement) {
+	_resetThings: function(activeElement, force) {
 		if(this.lastActiveEl === null) {
 			this._injectExtensionElement(activeElement);
-		} else if(this._isNeedReset(activeElement)) {
+		} else if(this._isNeedReset(activeElement) || force) {
 			if(this.styleObserver) { this.styleObserver.disconnect(); }
 
 			if(this.extensionEl) this.extensionEl.remove();
@@ -70,9 +70,12 @@ const EVENT_LISTENER = {
 			this.lastActiveEl.removeEventListener(`input`, this.inputListener);
 			this.lastActiveEl.removeEventListener(`scroll`, this.scrollListener);
 		}
-
-		activeElement.dataset.grammar = `true`;
-		this.lastActiveEl = activeElement;
+		if(force) {
+			this.lastActiveEl = null;
+		} else {
+			activeElement.dataset.grammar = `true`;
+			this.lastActiveEl = activeElement;
+		}
 	},
 	_injectExtensionElement: function(activeElement) {
 		this.extensionEl = renderExtensionElement();
@@ -104,10 +107,11 @@ const EVENT_LISTENER = {
 			}
 		});
 	},
-	desctructListener: function() {
+	destructListener: function() {
 		this.mirrorEl.remove();
 		this.extensionEl.remove();
 		this.port.disconnect();
+		this._resetThings(this.lastActiveEl, true);
 	},
 	onDocumentFocused: function() {
 		const { activeElement } = document;
@@ -160,7 +164,7 @@ document.addEventListener(`DOMContentLoaded`, function() {
 		if(action === `inspectionPowerOff`) {
 			if(confirm(`${location.hostname} 에서\n맞춤법 검사를 비활성화 하시겠습니까?`)) {
 				document.removeEventListener(`focusin`, eventListener, true);
-				EVENT_LISTENER.desctructListener();
+				EVENT_LISTENER.destructListener();
 			}
 		}
 	});
