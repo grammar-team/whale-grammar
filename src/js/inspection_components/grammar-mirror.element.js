@@ -18,6 +18,7 @@ class GrammarMirror extends HTMLElement {
 		this.setHTML = this.setHTML.bind(this);
 		this.setScrollPosition = this.setScrollPosition.bind(this);
 		this.getScrollPosition = this.getScrollPosition.bind(this);
+		this.getMirrorEl = this.getMirrorEl.bind(this);
 
 		this.measureTextPositions = this.measureTextPositions.bind(this);
 
@@ -59,6 +60,9 @@ class GrammarMirror extends HTMLElement {
 			scrollTop: parseInt(this.mirrorEl.dataset.scrollTop, 10),
 			scrollLeft: parseInt(this.mirrorEl.dataset.scrollLeft, 10)
 		};
+	}
+	getMirrorEl() {
+		return this.mirrorEl;
 	}
 
 	measureTextPositions(findList) {

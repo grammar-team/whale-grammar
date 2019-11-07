@@ -1,4 +1,4 @@
-import styleCloneAttributes from "./clone.styles";
+import { cloneElementStyles, cloneChildElementStyles } from "./clone.styles";
 
 export function renderMirrorElement() {
 	const mirrorEl = document.createElement(`grammar-mirror`);
@@ -7,15 +7,6 @@ export function renderMirrorElement() {
 	return mirrorEl;
 }
 
-function cloneElementStyles(targetEl, mirrorEl) {
-	const computedStyles = window.getComputedStyle(targetEl);
-	styleCloneAttributes.forEach(e => {
-		const style = computedStyles.getPropertyValue(`${e}`);
-		if(style.length > 0) {
-			mirrorEl.setStyle(e, style);
-		}
-	});
-}
 function attachStyleObserver(targetEl, mirrorEl, extensionEl) {
 	const observer = new window.MutationObserver(mutation => {
 		let isStyleChanged = false;
@@ -110,7 +101,7 @@ export function onTextAreaFocused({activeEl, mirrorEl, extensionEl, port}) {
 	return { styleObserver, inputEventListener, scrollEventListener };
 }
 
-function onEditableChanged(mirrorEl, extensionEl, port) {
+function onEditableChanged(mirrorEl, extensionEl, activeEl, port) {
 	let timeout;
 	return function(e) {
 		const { innerText, innerHTML } = e.target;
@@ -129,6 +120,8 @@ function onEditableChanged(mirrorEl, extensionEl, port) {
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
+			cloneChildElementStyles(activeEl, mirrorEl);
+
 			port.postMessage({
 				action: `inspectContent`,
 				options: { text: innerText }
@@ -160,7 +153,7 @@ export function onEditableElementFocused({ activeEl, mirrorEl, extensionEl, port
 	firstElementInspection(activeEl, mirrorEl, extensionEl, port);
 
 	const styleObserver = attachStyleObserver(activeEl, mirrorEl, extensionEl);
-	const inputEventListener = onEditableChanged(mirrorEl, extensionEl, port);
+	const inputEventListener = onEditableChanged(mirrorEl, extensionEl, activeEl, port);
 	const scrollEventListener = onScrolled(mirrorEl, extensionEl);
 	activeEl.addEventListener(`input`, inputEventListener);
 	activeEl.addEventListener(`scroll`, scrollEventListener);
