@@ -59,6 +59,15 @@ document.addEventListener(`DOMContentLoaded`, function() {
 				EVENT_LISTENER[action](options, controller);
 			}
 		});
+		window.addEventListener(`message`, function(e) {
+			const { action, options } = e.data;
+			if(
+				EVENT_LISTENER.hasOwnProperty(action) &&
+				typeof EVENT_LISTENER[action] === `function`
+			) {
+				EVENT_LISTENER[action](options, controller);
+			}
+		});
 	}
 });
 

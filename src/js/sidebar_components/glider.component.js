@@ -3,6 +3,7 @@ import Glide from "@glidejs/glide/dist/glide";
 function renderSliderSection(segmentedText) {
 	const segmentEl = document.createElement('div');
 
+	const imgSrc = `https://ssl.pstatic.net/sstatic/keypage/outside/scui/grammar_check/im/sp_grammar_check.png`;
 	segmentEl.className = `glide`;
 	segmentEl.innerHTML =
 		`<div class="glide__arrows" data-glide-el="controls">
@@ -13,6 +14,7 @@ function renderSliderSection(segmentedText) {
 				<span class="index_max">${segmentedText.length}</span>
 			</span>
 			<button class="glide__arrow glide__arrow--next" data-glide-dir=">">▶</button>
+			<a href="#" class="close-iframe" style="background-image: url('${imgSrc}');"></a>
     	</div>
 		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides"></ul>
@@ -36,17 +38,25 @@ function renderSliderSection(segmentedText) {
 		listEl.appendChild(liEl);
 	}
 	const buttonEventEl = segmentEl.querySelector('.index_current');
+
+	const aEl = segmentEl.querySelector(`.close-iframe`);
+	aEl.addEventListener(`click`, function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		window.parent.postMessage({ action: `setOriginalText`, options: { segmentedText: [ `` ]} }, `*`);
+	}, true);
+
 	return { segmentEl, buttonEventEl };
 }
 function glideSetup() {
 	const glide = new Glide('.glide', {
-		//swipeThreshold: 80
-		type: 'carousel',
+		type: 'slider',
 		autoplay: 0,
 		animationDuration: 300,
 		animationTimingFunc: 'linear',
 		perView: 1,
-		keyboard: false
+		keyboard: false,
+		rewind: false
 	}).mount();
 
 	return glide;

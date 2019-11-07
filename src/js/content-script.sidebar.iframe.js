@@ -1,4 +1,4 @@
-import { isSidebarFrame, constructComponentController } from "./sidebar_components/ui.component";
+import { isSidebarFrame, constructComponentController, transformDisplayComponents } from "./sidebar_components/ui.component";
 
 const EVENT_LISTENER = {
 	controller: null,
