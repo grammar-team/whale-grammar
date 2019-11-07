@@ -24,7 +24,7 @@ const EVENT_LISTENER = {
 		} else {
 			controller.grammarAreaEl.style.display = 'none';
 
-			const {segmentEl, frameList, glide} = constructSegmentController(controller, segmentedText);
+			const { segmentEl } = constructSegmentController(controller, segmentedText);
 			this.iframeEl = segmentEl;
 		}
 	}
