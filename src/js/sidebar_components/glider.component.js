@@ -8,7 +8,8 @@ function renderSliderButtonSection(num) {
 		const buttonEl = document.createElement('button');
 		buttonEl.className = `slider__bullet glide__bullet`;
 		buttonEl.setAttribute(`data-glide-dir`, `=${i}`);
-		bulletEl.appendChild(buttonEl);
+		buttonEl.style.width = `${parseInt((100-(num-1)/2)/num)}%`;
+	;	bulletEl.appendChild(buttonEl);
 	}
 
 	return bulletEl;
@@ -29,7 +30,6 @@ function renderSliderSection(segmentedText) {
 		const frameEl = document.createElement(`iframe`);
 		frameEl.src = `${location.toString()}`;
 		frameEl.addEventListener(`load`, function(e) {
-			console.log(`iframe loaded`);
 			e.target.contentWindow.postMessage({
 				action: `setOriginalText`,
 				options: { text: segmentedText[i] }
