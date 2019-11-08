@@ -36,6 +36,7 @@ function renderSliderSection(segmentedText) {
 		liEl.className = `glide__slide`;
 		liEl.appendChild(frameEl);
 		listEl.appendChild(liEl);
+
 	}
 	const buttonEventEl = segmentEl.querySelector('.index_current');
 
@@ -69,7 +70,7 @@ export function constructSegmentController(controller, segmentedText) {
 	const glide = glideSetup();
 	glide.on(['mount.after', 'run'], function () {
 		buttonEventEl.innerHTML = `${glide.index+1}`;
-	})
+	});
 
 	return { segmentEl };
 }

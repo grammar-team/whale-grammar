@@ -16,6 +16,19 @@ body.whale-grammar {
 
     .api_subject_bx {
       margin-top: 0;
+      .gray_txt {
+        display: block;
+        overflow-y: hidden;
+        position: relative;
+        width: 100%;
+        min-height: 109px;
+        padding: 0 0 10px;
+        border: none;
+        font-size: 1.8rem;
+        line-height: 2.4rem;
+        color: #424242;
+        resize: none;
+      }
     }
 
     #grammar_checker {
@@ -180,7 +193,11 @@ body.whale-grammar {
     ul.glide__slides {
       background-color: #e9ecef;
       height: 100%;
-
+      .glide__slide--active {
+        margin-right: 0;
+        margin-left: 0;
+        height: 99%;
+      }
       li iframe{
         width: 100vw;
         height: 100%;
