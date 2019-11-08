@@ -179,7 +179,11 @@ body.whale-grammar {
     ul.glide__slides {
       background-color: #e9ecef;
       height: 100%;
-
+      .glide__slide--active {
+        margin-right: 0;
+        margin-left: 0;
+        height: 99%;
+      }
       li iframe{
         width: 100vw;
         height: 100%;
