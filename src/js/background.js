@@ -69,6 +69,10 @@ const SIDEBAR_LISTENER = {
 	},
 	onMessagePushQueue: function(message) {
 		const { action, options } = message;
+		if(action === 'openURL') {
+			return;
+		}
+
 		const { text } = options;
 		if(text !== undefined) {
 			options.segmentedText = splitText(text);
@@ -175,4 +179,11 @@ whale.runtime.onConnect.addListener(function(port) {
     });
 });
 whale.runtime.onMessage.addListener(onMessagePushQueue);
+whale.runtime.onMessage.addListener(function(message) {
+	const { action, options } = message;
+	if(action === `openURL`) {
+		const { url } = options;
+		whale.tabs.create({ url });
+	}
+});
 CONTEXT_MENU.createContextMenu();
