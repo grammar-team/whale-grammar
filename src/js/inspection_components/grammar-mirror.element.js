@@ -46,7 +46,7 @@ class GrammarMirror extends HTMLElement {
 			text = ``;
 		}
 
-		this.mirrorEl.innerText = `${text}`;
+		this.mirrorEl.innerText = `${text.replace(/\ /g, String.fromCharCode(160))}`;
 	}
 	setHTML(html) {
 		this.mirrorEl.innerHTML = `${html}`;

@@ -28,7 +28,10 @@ const INSPECTION_LISTENER = {
 		fetchJson(text).then(data => {
 			const { status, errata_count, origin_html } = data;
 			if(status !== 200) {
-				console.error(data);
+				port.postMessage({
+					action: `inspectionError`,
+					options: {  }
+				});
 			}
 
 			const error_words = this._filterErrorWords(origin_html);

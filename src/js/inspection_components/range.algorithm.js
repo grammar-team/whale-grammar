@@ -71,6 +71,12 @@ function nodeTreeTravers(parentEl, nodeEl, { newLineList, findPositionList }, po
 					positionList.push({ height, width, top, left, index: TRAVERS.findIndex });
 				}
 			}
+			if(end < offsetEnd && TRAVERS.increaseIndex(findPositionList)) {
+				start = findPositionList[TRAVERS.findIndex].start;
+				end = findPositionList[TRAVERS.findIndex].end;
+
+				continue;
+			}
 
 			break;
 		}
