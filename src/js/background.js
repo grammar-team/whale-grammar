@@ -186,4 +186,12 @@ whale.runtime.onMessage.addListener(function(message) {
 		whale.tabs.create({ url });
 	}
 });
+chrome.runtime.onInstalled.addListener(function(details) {
+	const { reason } = details;
+	if(reason === `install`) {
+		whale.tabs.create({
+			url: `https://www.notion.so/3eb3c29fb8e54bb1bc62a370f676a8d3`
+		});
+	}
+});
 CONTEXT_MENU.createContextMenu();

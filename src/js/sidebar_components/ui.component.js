@@ -54,7 +54,7 @@ function renderExtensionSection() {
 			<p class="description">본 확장앱은 웨일 확장앱 콘테스트 출품작입니다.</p>
 		</div>
 		<ul class="section-buttons">
-			<li><a href="https://github.com/dlehdanakf/whale-grammar">사용방법</a></li>
+			<li><a href="https://www.notion.so/3eb3c29fb8e54bb1bc62a370f676a8d3">사용방법</a></li>
 			<li><a href="https://github.com/dlehdanakf/whale-grammar/issues">버그신고</a></li>
 			<li><a href="https://store.whale.naver.com/detail/gmfkgfndfdfgbghjmmcpakibpbjpbfok">리뷰 남기기</a></li>
 		</ul>
