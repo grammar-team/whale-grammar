@@ -17,6 +17,13 @@ export function cloneElementStyles(targetEl, mirrorEl) {
 	const { offsetHeight, offsetWidth } = targetEl;
 	mirrorEl.setStyle(`height`, `${offsetHeight}px`);
 	mirrorEl.setStyle(`width`, `${offsetWidth}px`);
+
+	if(targetEl === document.body) {
+		const style = computedStyles.getPropertyValue(`margin`);
+		if(style.length > 0) {
+			mirrorEl.setStyle(`margin`, style);
+		}
+	}
 }
 
 function _cloneElementChildStyles(targetEl, mirrorEl) {
