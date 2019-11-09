@@ -1,5 +1,3 @@
-import { getElementMargin } from "./grammar-extension.functions";
-
 class GrammarExtension extends HTMLElement {
 	constructor() {
 		super();
@@ -94,10 +92,9 @@ class GrammarExtension extends HTMLElement {
 		this.targetEl = targetEl;
 		this.dataset.generated = `whale-grammar`;
 		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = targetEl;
-		const { marginTop, marginLeft } = getElementMargin(targetEl);
 
-		this.style.top = `${offsetTop + parseInt(marginTop, 10)}px`;
-		this.style.left = `${offsetLeft + parseInt(marginLeft, 10)}px`;
+		this.style.top = `${offsetTop}px`;
+		this.style.left = `${offsetLeft}px`;
 
 		this.underlineWrapEl.style.width = `${offsetWidth}px`;
 		this.underlineWrapEl.style.height = `${offsetHeight}px`;

@@ -1,5 +1,5 @@
 const styleCloneAttributes = [
-	`border`, `margin`, `padding`, `font`, `direction`, `text-align`,
+	`border`, `padding`, `font`, `direction`, `text-align`,
 	`text-shadow`, `text-indent`, `letter-spacing`, `word-break`,
 	`overflow-wrap`, `word-spacing`, `writing-mode`, `white-space`, `vertical-align`,
 	`clear`, `position`, `top`, `left`, `background`, `overflow`, `color`
