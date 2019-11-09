@@ -1,9 +1,8 @@
 const styleCloneAttributes = [
-	`border`, `margin`, `padding`, `font`, `direction`, `textAlign`,
-	`textShadow`, `textIndent`, `letterSpacing`, `wordBreak`,
-	`overflowWrap`, `wordSpacing`, `writingMode`, `whiteSpace`, `verticalAlign`,
-	`clear`, `boxSizing`, `width`, `height`, `position`, `top`, `left`,
-	`background`, `overflow`, `color`
+	`border`, `margin`, `padding`, `font`, `direction`, `text-align`,
+	`text-shadow`, `text-indent`, `letter-spacing`, `word-break`,
+	`overflow-wrap`, `word-spacing`, `writing-mode`, `white-space`, `vertical-align`,
+	`clear`, `position`, `top`, `left`, `background`, `overflow`, `color`
 ];
 
 export function cloneElementStyles(targetEl, mirrorEl) {
@@ -14,6 +13,10 @@ export function cloneElementStyles(targetEl, mirrorEl) {
 			mirrorEl.setStyle(e, style);
 		}
 	});
+
+	const { offsetHeight, offsetWidth } = targetEl;
+	mirrorEl.setStyle(`height`, `${offsetHeight}px`);
+	mirrorEl.setStyle(`width`, `${offsetWidth}px`);
 }
 
 function _cloneElementChildStyles(targetEl, mirrorEl) {

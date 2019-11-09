@@ -29,6 +29,7 @@ class GrammarMirror extends HTMLElement {
 		this.mirrorEl.role = `whale-grammar-mirror`;
 		this.mirrorEl.dataset.scrollTop =`0`;
 
+		this.shadowRoot.innerHTML = `<style>* { box-sizing: border-box; }</style>`;
 		this.shadowRoot.appendChild(this.mirrorEl);
 	}
 
@@ -46,7 +47,7 @@ class GrammarMirror extends HTMLElement {
 			text = ``;
 		}
 
-		this.mirrorEl.innerText = `${text.replace(/\ /g, String.fromCharCode(160))}`;
+		this.mirrorEl.innerHTML = `${text}`;
 	}
 	setHTML(html) {
 		this.mirrorEl.innerHTML = `${html}`;
