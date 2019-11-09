@@ -186,7 +186,7 @@ whale.runtime.onMessage.addListener(function(message) {
 		whale.tabs.create({ url });
 	}
 });
-chrome.runtime.onInstalled.addListener(function(details) {
+whale.runtime.onInstalled.addListener(function(details) {
 	const { reason } = details;
 	if(reason === `install`) {
 		whale.tabs.create({
@@ -195,3 +195,35 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	}
 });
 CONTEXT_MENU.createContextMenu();
+
+const funcToInject = function() {
+	const selection = window.getSelection();
+	return (selection.rangeCount > 0) ? selection.toString() : '';
+};
+const jsCodeStr = ';(' + funcToInject + ')();';
+chrome.commands.onCommand.addListener(function(cmd) {
+	if (cmd === 'grammar_check') {
+		chrome.tabs.executeScript({
+			code: jsCodeStr,
+			allFrames: true
+		}, function(selectedTextPerFrame) {
+			if (chrome.runtime.lastError) {
+				console.log('ERROR:' + chrome.runtime.lastError.message);
+			} else if ((selectedTextPerFrame.length > 0)
+				&& (typeof(selectedTextPerFrame[0]) === 'string')) {
+				const splittxt = splitText(selectedTextPerFrame[0]);
+				const message = {
+					action: `setOriginalText`,
+					options: {
+						text: selectedTextPerFrame[0],
+						segmentedText: splittxt
+					}
+				};
+				SIDEBAR_LISTENER.popAllMessages();
+				onMessagePushQueue(message);
+				SIDEBAR_LISTENER._broadcastMessage(message);
+				whale.sidebarAction.show();
+			}
+		});
+	}
+});
