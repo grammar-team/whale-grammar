@@ -61,8 +61,8 @@
   "commands" : {
    "grammar_check": {
      "suggested_key": {
-       "default": "Ctrl+Shift+Z",
-       "mac": "Command+Shift+Z"
+       "default": "Ctrl+Shift+X",
+       "mac": "Command+Shift+X"
      },
      "description": "start grammar check"
    }
