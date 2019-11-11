@@ -32,11 +32,12 @@
       "all_frames": true,
       "run_at": "document_start"
     }, {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["<all_urls>"],
       "css": ["css/content-script.inspection.css"],
       "js": ["js/content-script.inspection.js"],
+      "run_at": "document_start",
       "all_frames": true,
-      "run_at": "document_start"
+      "match_about_blank": true
     }
   ],
 
