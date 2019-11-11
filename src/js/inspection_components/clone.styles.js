@@ -1,6 +1,6 @@
 const styleCloneAttributes = [
 	`border`, `padding`, `font`, `direction`, `text-align`,
-	`text-shadow`, `text-indent`, `letter-spacing`, `word-break`,
+	`text-shadow`, `text-indent`, `letter-spacing`, `word-break`, `line-height`,
 	`overflow-wrap`, `word-spacing`, `writing-mode`, `white-space`, `vertical-align`,
 	`clear`, `position`, `top`, `left`, `background`, `overflow`, `color`
 ];
@@ -10,6 +10,7 @@ export function cloneElementStyles(targetEl, mirrorEl) {
 	styleCloneAttributes.forEach(e => {
 		const style = computedStyles.getPropertyValue(`${e}`);
 		if(style.length > 0) {
+			console.log({ e, style });
 			mirrorEl.setStyle(e, style);
 		}
 	});
@@ -34,6 +35,11 @@ function _cloneElementChildStyles(targetEl, mirrorEl) {
 			mirrorEl.style[e] = style;
 		}
 	});
+
+	const { offsetHeight, offsetWidth } = targetEl;
+	mirrorEl.style.height = `${offsetHeight}px`;
+	mirrorEl.style.width = `${offsetWidth}px`;
+	mirrorEl.style.overflow = `hidden`;
 }
 
 function nodeTreeTraverse(targetEl, mirrorEl) {
