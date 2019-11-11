@@ -1,13 +1,13 @@
 {
   "name": "whale-grammar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Korean grammar checker extension for whale browser",
   "main": "webpack.config.js",
   "scripts": {
     "cleanup": "rm -rf dist && mkdir dist",
     "copy": "cp -rip src/* dist/",
     "build": "./node_modules/.bin/webpack --mode=none",
-    "build:prod": "./node_modules/.bin/webpack --optimize-minimize",
+    "build:prod": "npm run cleanup && npm run copy && ./node_modules/.bin/webpack --optimize-minimize",
     "build:watch": "npm run cleanup && npm run copy && ./node_modules/.bin/webpack --mode=none --watch",
     "eslint": "./node_modules/.bin/eslint"
   },
