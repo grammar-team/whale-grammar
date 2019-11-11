@@ -3,6 +3,7 @@ import GrammarExtension from "./inspection_components/grammar-extension.element"
 import GrammarMirror from "./inspection_components/grammar-mirror.element";
 
 import { isSidebar } from "./sidebar_components/ui.component";
+import { cloneElementStyles } from "./inspection_components/clone.styles";
 import { addURLtoBlacklist, isURLinBlacklist } from "./inspection_components/blacklist.component";
 import {
 	renderMirrorElement, onTextAreaFocused, onEditableElementFocused
@@ -16,11 +17,14 @@ const PORT_LISTENER = {
 	startInspection: function(options, { extensionEl }) {
 		extensionEl.setDotStatus({ status: `loading` });
 	},
-	inspectionResult: function(options, { mirrorEl, extensionEl }) {
+	inspectionResult: function(options, { mirrorEl, extensionEl, activeEl }) {
+		cloneElementStyles(activeEl, mirrorEl);
+
 		const { error_count, error_words } = options;
 		const { positionList } = mirrorEl.measureTextPositions(error_words);
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
+		extensionEl.setSizePosition(activeEl);
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 		extensionEl.setDotStatus({ error_count, status: `default` });
 	},
@@ -105,7 +109,8 @@ const EVENT_LISTENER = {
 				PORT_LISTENER[action](options, {
 					port: this.port,
 					mirrorEl: this.mirrorEl,
-					extensionEl: this.extensionEl
+					extensionEl: this.extensionEl,
+					activeEl: this.lastActiveEl
 				});
 			}
 		});
