@@ -15,9 +15,11 @@ export function findAllNewLines(text) {
 const TRAVERS = {
 	findIndex: 0,
 	offsetHead: 0,
+	newlineIndex: 0,
 	reset: function() {
 		this.findIndex = 0;
 		this.offsetHead = 0;
+		this.newlineIndex = 0;
 	},
 	increaseIndex: function(findPositionList) {
 		if(this.findIndex + 1 >= findPositionList.length)
@@ -25,6 +27,9 @@ const TRAVERS = {
 
 		this.findIndex += 1;
 		return true;
+	},
+	increaseNewlineIndex: function() {
+		this.newlineIndex += 1;
 	},
 	increaseHead: function(textLength) {
 		this.offsetHead += textLength;
@@ -82,8 +87,15 @@ function nodeTreeTravers(parentEl, nodeEl, { newLineList, findPositionList }, po
 		}
 
 		TRAVERS.increaseHead(length);
-		if(newLineList.includes(offsetEnd)) {
-			TRAVERS.increaseHead(1);
+		while(true) {
+			if(newLineList[TRAVERS.newlineIndex] === TRAVERS.offsetHead) {
+				TRAVERS.increaseHead(1);
+				TRAVERS.increaseNewlineIndex(newLineList);
+
+				continue;
+			}
+
+			break;
 		}
 
 	} else if(nodeEl.nodeType === Node.ELEMENT_NODE) {

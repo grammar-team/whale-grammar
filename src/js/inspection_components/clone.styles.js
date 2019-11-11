@@ -10,7 +10,6 @@ export function cloneElementStyles(targetEl, mirrorEl) {
 	styleCloneAttributes.forEach(e => {
 		const style = computedStyles.getPropertyValue(`${e}`);
 		if(style.length > 0) {
-			console.log({ e, style });
 			mirrorEl.setStyle(e, style);
 		}
 	});
