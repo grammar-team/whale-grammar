@@ -28,7 +28,7 @@ export function cloneElementStyles(targetEl, mirrorEl) {
 
 function _cloneElementChildStyles(targetEl, mirrorEl) {
 	const computedStyles = window.getComputedStyle(targetEl);
-	styleCloneAttributes.forEach(e => {
+	[`margin`, ...styleCloneAttributes].forEach(e => {
 		const style = computedStyles.getPropertyValue(`${e}`);
 		if(style.length > 0) {
 			mirrorEl.style[e] = style;
