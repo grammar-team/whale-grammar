@@ -37,8 +37,7 @@ function onScrolled(mirrorEl, extensionEl) {
 		mirrorEl.setScrollPosition(e.target);
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
-		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		const { positionList } = mirrorEl.measureTextPositions();
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 	}
 }
@@ -56,8 +55,7 @@ function onTextAreaChanged(mirrorEl, extensionEl, port) {
 		}
 
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
-		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		const { positionList } = mirrorEl.measureTextPositions();
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
@@ -113,15 +111,13 @@ function onEditableChanged(mirrorEl, extensionEl, activeEl, port) {
 			return;
 		}
 
+		cloneChildElementStyles(activeEl, mirrorEl);
 		const { scrollTop, scrollLeft } = mirrorEl.getScrollPosition();
-		const { positionList, missingIndexList } = mirrorEl.measureTextPositions();
-		// extensionEl.modifyUnderlines(positionList, missingIndexList, { scrollTop, scrollLeft });
+		const { positionList } = mirrorEl.measureTextPositions();
 		extensionEl.addUnderlines(positionList, { scrollTop, scrollLeft });
 
 		extensionEl.setDotStatus({ status: `loading` });
 		timeout = window.setTimeout(function() {
-			cloneChildElementStyles(activeEl, mirrorEl);
-
 			port.postMessage({
 				action: `inspectContent`,
 				options: { text: innerText }
