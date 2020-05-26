@@ -5,6 +5,10 @@
 
 <img />
 
+### 개발자
+- 👱이동현 @dlehdanakf
+- 👱한승진 @hsj-96
+
 ## 어떤 기능을 제공하나요?
 #### - 실시간 맞춤법 검사
 <img src="https://user-images.githubusercontent.com/12992959/68655038-a2905500-0572-11ea-9147-99bf075778de.gif" height="80" />
