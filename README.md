@@ -7,7 +7,7 @@
 
 ### 개발자
 - 👱이동현 [dlehdanakf](https://github.com/dlehdanakf)
-- 👱한승진 [hsj-96](https://github.com/jsj-96)
+- 👱한승진 [hsj-96](https://github.com/hsj-96)
 
 ## 어떤 기능을 제공하나요?
 #### - 실시간 맞춤법 검사
