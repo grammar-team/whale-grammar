@@ -1,7 +1,16 @@
 /* global whale */
 
+import { measure } from "measurement-protocol";
 import { fetchJson } from "./background_components/jsonp.functions";
 import splitText from "./background_components/split.function";
+
+const GA_TRACK_ID = 'UA-222165360-1';
+const sendInspectionEvent = (origin) => {
+	return measure(GA_TRACK_ID).event('GrammarInspection', 'Inspection', origin).send();
+};
+const sendPageViewEvent = () => {
+	return measure(GA_TRACK_ID).event('WhaleLegacy', 'SidebarOpen').send();
+};
 
 const INSPECTION_LISTENER = {
 	_filterErrorWords: (html) => {
@@ -19,12 +28,13 @@ const INSPECTION_LISTENER = {
 		return words;
 	},
 	inspectContent: function(port, options) {
-		const { text } = options;
+		const { text, origin } = options;
 		port.postMessage({
 			action: `startInspection`,
 			options: {  }
 		});
 
+		sendInspectionEvent(origin);
 		fetchJson(text).then(data => {
 			const { status, errata_count, origin_html } = data;
 			if(status !== 200) {
@@ -143,27 +153,29 @@ const onMessagePushQueue = e => SIDEBAR_LISTENER.onMessagePushQueue(e);
 const onMessageCallback = e => SIDEBAR_LISTENER.onMessageCallback(e);
 whale.runtime.onConnect.addListener(function(port) {
 	const { name } = port;
-    if(!name.includes(`grammar-sidebar-`))
-        return;
+	if(!name.includes(`grammar-sidebar-`)) {
+		return;
+	}
 
-    SIDEBAR_LISTENER.portList[name] = port;
-    if(Object.keys(SIDEBAR_LISTENER.portList).length === 1) {
+	sendPageViewEvent();
+	SIDEBAR_LISTENER.portList[name] = port;
+	if(Object.keys(SIDEBAR_LISTENER.portList).length === 1) {
 		whale.runtime.onMessage.removeListener(onMessagePushQueue);
 		whale.runtime.onMessage.addListener(onMessageCallback);
 		CONTEXT_MENU.createContextMenuWithPort();
 	}
 
-    port.onDisconnect.addListener(() => {
-        delete SIDEBAR_LISTENER.portList[name];
+	port.onDisconnect.addListener(() => {
+			delete SIDEBAR_LISTENER.portList[name];
 
-        if(Object.keys(SIDEBAR_LISTENER.portList).length < 1) {
-			whale.runtime.onMessage.removeListener(onMessageCallback);
-            whale.runtime.onMessage.addListener(onMessagePushQueue);
-            CONTEXT_MENU.createContextMenu();
-        }
-    });
+			if(Object.keys(SIDEBAR_LISTENER.portList).length < 1) {
+		whale.runtime.onMessage.removeListener(onMessageCallback);
+					whale.runtime.onMessage.addListener(onMessagePushQueue);
+					CONTEXT_MENU.createContextMenu();
+			}
+	});
 
-    SIDEBAR_LISTENER.popAllMessages();
+	SIDEBAR_LISTENER.popAllMessages();
 });
 whale.runtime.onConnect.addListener(function(port) {
     if(port.name !== `grammar-inspection`)
