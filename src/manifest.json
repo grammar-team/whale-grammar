@@ -33,6 +33,7 @@
       "run_at": "document_start"
     }, {
       "matches": ["<all_urls>"],
+      "exclude_matches": ["https://*.notion.so/*"],
       "css": ["css/content-script.inspection.css"],
       "js": ["js/content-script.inspection.js"],
       "run_at": "document_start",
