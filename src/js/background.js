@@ -1,15 +1,17 @@
 /* global whale */
 
-import { measure } from "measurement-protocol";
-import { fetchJson } from "./background_components/jsonp.functions";
-import splitText from "./background_components/split.function";
+import { measure } from 'measurement-protocol';
+import { fetchJson } from './background_components/jsonp.functions';
+import splitText from './background_components/split.function';
 
-const GA_TRACK_ID = "UA-222165360-1";
+const GA_TRACK_ID = 'UA-222165360-1';
 const sendInspectionEvent = (origin) => {
-  return measure(GA_TRACK_ID).event("GrammarInspection", "Inspection", origin).send();
+  return measure(GA_TRACK_ID)
+    .event('GrammarInspection', 'Inspection', origin)
+    .send();
 };
 const sendPageViewEvent = () => {
-  return measure(GA_TRACK_ID).event("WhaleLegacy", "SidebarOpen").send();
+  return measure(GA_TRACK_ID).event('WhaleLegacy', 'SidebarOpen').send();
 };
 
 const INSPECTION_LISTENER = {
@@ -80,7 +82,7 @@ const SIDEBAR_LISTENER = {
   },
   onMessagePushQueue: function (message) {
     const { action, options } = message;
-    if (action === "openURL") {
+    if (action === 'openURL') {
       return;
     }
 
@@ -183,7 +185,10 @@ whale.runtime.onConnect.addListener(function (port) {
 
   port.onMessage.addListener(function (message) {
     const { action, options } = message;
-    if (INSPECTION_LISTENER.hasOwnProperty(action) && typeof INSPECTION_LISTENER[action] === `function`)
+    if (
+      INSPECTION_LISTENER.hasOwnProperty(action) &&
+      typeof INSPECTION_LISTENER[action] === `function`
+    )
       INSPECTION_LISTENER[action](port, options);
   });
 });
@@ -209,20 +214,36 @@ whale.runtime.onMessage.addListener(function (message) {
 CONTEXT_MENU.createContextMenu();
 
 whale.runtime.onMessageExternal.addListener(function (request, { id }) {
-  const chromeExtensionID = "alddllhhoalhongghdfhelgaabcnbfej";
+  const chromeExtensionID = 'alddllhhoalhongghdfhelgaabcnbfej';
   const { type } = request || {};
 
-  if (type === "uninstall" && id === chromeExtensionID) {
-    whale.management.uninstallSelf();
+  if (type === 'uninstall' && id === chromeExtensionID) {
+    fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=G-ZWXHCSW4V1&api_secret=Wb3S2T2VS16YCORPU4vxPA`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          client_id: 'html_template',
+          events: [
+            {
+              name: 'UNINSTALL_WHALE_EXTENSION',
+              params: {},
+            },
+          ],
+        }),
+      }
+    ).then(() => whale.management.uninstallSelf());
   }
 });
 
 (() => {
   // open campaign
-  whale.storage.local.get(["show_campaign"], function ({ show_campaign }) {
+  whale.storage.local.get(['show_campaign'], function ({ show_campaign }) {
     const one_day = 86_400_000; // 60 * 60 * 24 * 1000;
     const today = new Date().getTime();
-    const show_campaign_flag = typeof show_campaign !== "number" || Math.abs(today - show_campaign) >= one_day;
+    const show_campaign_flag =
+      typeof show_campaign !== 'number' ||
+      Math.abs(today - show_campaign) >= one_day;
 
     if (show_campaign_flag) {
       whale.tabs.create({
@@ -234,11 +255,11 @@ whale.runtime.onMessageExternal.addListener(function (request, { id }) {
 
 const funcToInject = function () {
   const selection = window.getSelection();
-  return selection.rangeCount > 0 ? selection.toString() : "";
+  return selection.rangeCount > 0 ? selection.toString() : '';
 };
-const jsCodeStr = ";(" + funcToInject + ")();";
+const jsCodeStr = ';(' + funcToInject + ')();';
 chrome.commands.onCommand.addListener(function (cmd) {
-  if (cmd === "grammar_check") {
+  if (cmd === 'grammar_check') {
     chrome.tabs.executeScript(
       {
         code: jsCodeStr,
@@ -246,8 +267,11 @@ chrome.commands.onCommand.addListener(function (cmd) {
       },
       function (selectedTextPerFrame) {
         if (chrome.runtime.lastError) {
-          console.log("ERROR:" + chrome.runtime.lastError.message);
-        } else if (selectedTextPerFrame.length > 0 && typeof selectedTextPerFrame[0] === "string") {
+          console.log('ERROR:' + chrome.runtime.lastError.message);
+        } else if (
+          selectedTextPerFrame.length > 0 &&
+          typeof selectedTextPerFrame[0] === 'string'
+        ) {
           const splittxt = splitText(selectedTextPerFrame[0]);
           const message = {
             action: `setOriginalText`,
