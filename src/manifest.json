@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "웨않되 - 맞춤법 검사기",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "웨일 브라우저용 한글 맞춤법 검사기 (feat. NAVER 맞춤법 검사기)",
   "icons": {
     "16": "image/icons/contextmenu_logo_16.png",
