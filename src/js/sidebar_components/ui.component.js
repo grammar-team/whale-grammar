@@ -4,7 +4,11 @@ export function isSidebar() {
   const { dataset } = document.documentElement;
   const { userAgent } = window.navigator;
   const { href } = window.location;
-  if (userAgent.includes(`sidebar`) && dataset.useragent.includes(`sidebar`) && href.includes(`whale-grammar`)) {
+  if (
+    userAgent.includes(`sidebar`) &&
+    dataset.useragent.includes(`sidebar`) &&
+    href.includes(`whale-grammar`)
+  ) {
     return true;
   }
 
@@ -87,6 +91,24 @@ function injectIntroduceSection(nodeEl) {
         options: { url: this.href },
       });
     });
+  });
+
+  campaignEl.querySelector('a').addEventListener('click', () => {
+    fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=G-ZWXHCSW4V1&api_secret=Wb3S2T2VS16YCORPU4vxPA`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          client_id: 'html_template',
+          events: [
+            {
+              name: 'CLICK_EXTENSION_DOWNLOAD',
+              params: {},
+            },
+          ],
+        }),
+      }
+    );
   });
 
   nodeEl.parentElement.insertBefore(sectionEl, nodeEl.nextSibling);
