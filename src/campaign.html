@@ -15,8 +15,14 @@
       <div class="content">
         <div class="texts">
           <h2>더 빠르게,<br />바로 교정하세요</h2>
-          <p>검사 결과를 더 정확하게 표시하고<br />더 빠른 성능으로 돌아온 웨않되 맞춤법 검사기.</p>
-          <p>신규 버전에서는 빨간 밑줄에 마우스를 올리면<br />클릭 한 번에 올바른 맞춤법으로 교정할 수 있습니다.</p>
+          <p>
+            검사 결과를 더 정확하게 표시하고<br />더 빠른 성능으로 돌아온 웨않되
+            맞춤법 검사기.
+          </p>
+          <p>
+            신규 버전에서는 빨간 밑줄에 마우스를 올리면<br />클릭 한 번에 올바른
+            맞춤법으로 교정할 수 있습니다.
+          </p>
           <p>지금 <strong>"Chrome Web Store"</strong>에서 설치하세요.</p>
           <div>
             <a
@@ -34,7 +40,11 @@
             <span>웨않되 - 맞춤법 검사기</span>
           </div>
           <div class="wrap">
-            <img src="image/background-window.png" class="background" alt="background" />
+            <img
+              src="image/background-window.png"
+              class="background"
+              alt="background"
+            />
             <img src="image/demo.gif" alt="tooltip" class="example" />
           </div>
         </div>
@@ -46,4 +56,27 @@
       </div>
     </section>
   </body>
+  <script>
+    function sendGA4Event() {
+      fetch(
+        `https://www.google-analytics.com/mp/collect?measurement_id=G-ZWXHCSW4V1&api_secret=Wb3S2T2VS16YCORPU4vxPA`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            client_id: 'html_template',
+            events: [
+              {
+                name: 'CLICK_EXTENSION_DOWNLOAD',
+                params: {},
+              },
+            ],
+          }),
+        }
+      );
+    }
+
+    document.querySelector('.chrome-store').addEventListener('click', () => {
+      sendGA4Event();
+    });
+  </script>
 </html>
