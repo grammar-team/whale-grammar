@@ -208,7 +208,17 @@ whale.runtime.onMessage.addListener(function (message) {
 
 CONTEXT_MENU.createContextMenu();
 
+whale.runtime.onMessageExternal.addListener(function (request, { id }) {
+  const chromeExtensionID = "alddllhhoalhongghdfhelgaabcnbfej";
+  const { type } = request || {};
+
+  if (type === "uninstall" && id === chromeExtensionID) {
+    whale.management.uninstallSelf();
+  }
+});
+
 (() => {
+  // open campaign
   whale.storage.local.get(["show_campaign"], function ({ show_campaign }) {
     const one_day = 86_400_000; // 60 * 60 * 24 * 1000;
     const today = new Date().getTime();
