@@ -4,6 +4,10 @@ html[data-useragent*="sidebar"] body {
   visibility: hidden;
 }
 
+.sp_nkeyword {
+  display: none;
+}
+
 body.whale-grammar {
   visibility: visible !important;
 
@@ -100,6 +104,57 @@ body.whale-grammar {
     }
   }
 
+  section.extension-campaign {
+    display: block !important;
+
+    .section-content {
+      display: block;
+      margin-top: 0 !important;
+      margin-bottom: 10px !important;
+      padding: 18px;
+      border-top: 1px solid #e2e5e8;
+      background: rgb(209, 53, 194);
+      background: linear-gradient(
+        135deg,
+        rgba(209, 53, 194, 1) 0%,
+        rgba(253, 88, 88, 1) 35%,
+        rgba(99, 153, 196, 1) 100%
+      );
+
+      .chrome-store {
+        background-color: #000;
+        overflow: hidden;
+        display: inline-block;
+        font-size: 0;
+        line-height: 0;
+        padding: 0 6px;
+        border-radius: 6px;
+
+        img {
+          display: inline-block;
+          height: 40px;
+        }
+      }
+
+      h3 {
+        margin: 0 0 10px 0;
+        color: #fff;
+        font-weight: 900;
+        font-size: 2rem;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        line-height: 1em;
+      }
+
+      p {
+        margin: 8px 0;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 400;
+        font-size: 1.4rem;
+        line-height: 1.48em;
+      }
+    }
+  }
+
   section.extension-introduce {
     display: block !important;
 
@@ -121,7 +176,7 @@ body.whale-grammar {
         font-size: 1.6rem;
         line-height: 2.3rem;
         color: #424242;
-        letter-spacing: -.3px;
+        letter-spacing: -0.3px;
         margin-top: 5px;
       }
 
@@ -166,7 +221,7 @@ body.whale-grammar {
     bottom: 0;
     right: 0;
     z-index: 9999999;
-    background-color: #FFF;
+    background-color: #fff;
 
     .close-iframe {
       position: absolute;
@@ -198,7 +253,7 @@ body.whale-grammar {
         margin-left: 0;
         height: 99%;
       }
-      li iframe{
+      li iframe {
         width: 100vw;
         height: 100%;
         border: none;
@@ -248,7 +303,7 @@ body.whale-grammar {
         cursor: pointer;
         margin: 0;
         outline: none;
-        color: #FFF;
+        color: #fff;
         line-height: 1;
         text-align: center;
       }
@@ -271,7 +326,7 @@ body.whale-grammar {
           padding-right: 16px;
 
           &::after {
-            content: '';
+            content: "";
             display: block;
             position: absolute;
             top: 0;
