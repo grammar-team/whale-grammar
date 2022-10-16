@@ -122,6 +122,10 @@ body {
         font-size: 1.1rem;
         line-height: 1.48em;
 
+        > strong {
+          color: #fff;
+        }
+
         a {
           color: rgba(255, 255, 255, 0.8);
           text-decoration: none;
