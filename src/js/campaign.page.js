@@ -24,10 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   closeButtonEl.addEventListener("click", () => {
-    const show_campaign = new Date().getTime();
+    const result = confirm(
+      "업데이트를 안하시겠습니까?\n웨않되 v1 버전 지원이 곧 종료됩니다.\n업데이트 진행 시 웨일 브라우저에서 웨않되 v2 버전을 계속 이용하실 수 있습니다."
+    );
 
-    whale.storage.local.set({ show_campaign }, () => {
-      window.close();
-    });
+    if (result === true) {
+      const show_campaign = new Date().getTime();
+
+      whale.storage.local.set({ show_campaign }, () => {
+        window.close();
+      });
+    }
   });
 });

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "웨않되 - 맞춤법 검사기",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "웨일 브라우저용 한글 맞춤법 검사기 (feat. NAVER 맞춤법 검사기)",
   "icons": {
     "16": "image/icons/contextmenu_logo_16.png",
@@ -45,17 +45,11 @@
 
   "permissions": ["https://m.search.naver.com/", "tabs", "storage", "contextMenus", "<all_urls>"],
   "web_accessible_resources": [
-    "image/default.png",
-    "image/contest_logo.png",
-    "image/naver_logo.png",
-    "image/power.svg",
-    "image/loading.svg",
-    "image/caution.svg",
-    "image/error.svg",
-    "image/chrome-web-store.png",
+    "image/*",
     "css/grammar-extension.element.css",
     "css/campaign.page.css",
-    "campaign.html"
+    "campaign.html",
+    "release-note.html"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'",
   "commands": {
