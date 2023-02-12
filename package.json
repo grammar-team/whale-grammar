@@ -1,6 +1,6 @@
 {
   "name": "whale-grammar",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Korean grammar checker extension for whale browser",
   "main": "webpack.config.js",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "웨않되 - 맞춤법 검사기",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "웨일 브라우저용 한글 맞춤법 검사기 (feat. NAVER 맞춤법 검사기)",
   "icons": {
     "16": "image/icons/contextmenu_logo_16.png",
@@ -26,9 +26,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://m.search.naver.com/search.naver?from=whale-grammar&query=*"],
+      "matches": [
+        "https://m.search.naver.com/search.naver?from=whale-grammar&query=*"
+      ],
       "css": ["css/content-script.sidebar.css"],
-      "js": ["js/content-script.sidebar.js", "js/content-script.sidebar.iframe.js"],
+      "js": [
+        "js/content-script.sidebar.js",
+        "js/content-script.sidebar.iframe.js"
+      ],
       "all_frames": true,
       "run_at": "document_start"
     },
@@ -43,12 +48,16 @@
     }
   ],
 
-  "permissions": ["https://m.search.naver.com/", "tabs", "storage", "contextMenus", "<all_urls>"],
+  "permissions": [
+    "https://m.search.naver.com/",
+    "tabs",
+    "storage",
+    "contextMenus",
+    "<all_urls>"
+  ],
   "web_accessible_resources": [
     "image/*",
     "css/grammar-extension.element.css",
-    "css/campaign.page.css",
-    "campaign.html",
     "release-note.html"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://m.search.naver.com; object-src 'self'",

@@ -228,20 +228,20 @@ whale.runtime.onMessageExternal.addListener(function (request, { id }) {
   }
 });
 
-(() => {
-  // open campaign
-  whale.storage.local.get(["show_campaign"], function ({ show_campaign }) {
-    const one_day = 86_400_000; // 60 * 60 * 24 * 1000;
-    const today = new Date().getTime();
-    const show_campaign_flag = typeof show_campaign !== "number" || Math.abs(today - show_campaign) >= one_day;
+// (() => {
+//   // open campaign
+//   whale.storage.local.get(["show_campaign"], function ({ show_campaign }) {
+//     const one_day = 86_400_000; // 60 * 60 * 24 * 1000;
+//     const today = new Date().getTime();
+//     const show_campaign_flag = typeof show_campaign !== "number" || Math.abs(today - show_campaign) >= one_day;
 
-    if (show_campaign_flag) {
-      whale.tabs.create({
-        url: whale.runtime.getURL(`campaign.html`),
-      });
-    }
-  });
-})();
+//     if (show_campaign_flag) {
+//       whale.tabs.create({
+//         url: whale.runtime.getURL(`campaign.html`),
+//       });
+//     }
+//   });
+// })();
 
 const funcToInject = function () {
   const selection = window.getSelection();
